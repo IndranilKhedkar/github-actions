@@ -58,7 +58,9 @@ runs:
         git config user.email github-actions@github.com
         git status
         git add .
+        echo "step 1"
         git commit -am ${{ env.branch_name }}
+        echo "step 2"
         git push
 
     - name: Comment code coverage report link
