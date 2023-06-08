@@ -60,6 +60,12 @@ jobs:
           files: client/test-results/junit-unit-test-result.xml
           report_individual_runs: true
 
+      - name: Comment code coverage report link
+        uses: actions/github-script@v6
+        with:
+          script: |
+            console.log('context', context);
+
       - name: Publish code coverage report
         uses: IndranilKhedkar/github-actions/.github/actions/publish@test-github-actions
         if: github.event_name == 'pull_request'
