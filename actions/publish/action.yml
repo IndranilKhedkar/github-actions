@@ -1,5 +1,7 @@
 name: Publish
 
+description: 'Publish test results'
+
 inputs:
   comment-body:
     description: "Comment to be added on pull request"
@@ -9,7 +11,6 @@ inputs:
 
 runs:
   using: 'composite'
-  description: 'Publish test results'
   steps:
     - name: Checkout code
       uses: actions/checkout@v3
@@ -32,10 +33,12 @@ runs:
         path: artifacts/test-results
 
     - name: Set the branch name
+      shell: bash
       run: |
         echo "branch_name=${{ github.head_ref || github.ref_name }}" >> "$GITHUB_ENV"
 
     - name: Commit reports
+      shell: bash
       run: |          
         mkdir -p reports
         cd reports
