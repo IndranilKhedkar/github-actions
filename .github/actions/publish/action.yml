@@ -69,7 +69,7 @@ runs:
         # github-token: ${{ inputs.github-token }}
         script: |
           // Get the list of existing comments.
-          console.log(context.repo);
+          console.log(JSON.stringify(context));
           # console.log(${{ inputs.github-token }});
 
           const { data: comments } = await github.rest.issues.listComments({
