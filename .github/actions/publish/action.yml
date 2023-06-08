@@ -63,26 +63,19 @@ runs:
 
     - name: Comment code coverage report link
       uses: actions/github-script@v6
-      shell: bash
       with:
         github-token: ${{ inputs.github-token }}
         script: |
-          console.log(1);
-          console.log('context', JSON.stringify(context));
-
-          const { data: comments } = await github.rest.issues.listComments({
+          const { data: comments } = github.rest.issues.listComments({
             owner: 'IndranilKhedkar',
             repo: 'github-actions',
             issue_number: 3,
           });
           
-          console.log(2);
           const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes('## Code Coverage<br/>'));
-          console.log(3);
           
           if(botComment) {
-            console.log(4);
-            await github.rest.issues.updateComment({
+            github.rest.issues.updateComment({
               owner: 'IndranilKhedkar',
               repo: 'github-actions',
               comment_id: botComment.id,
@@ -90,13 +83,10 @@ runs:
               :recycle: This comment has been updated with latest results.`,
             });
           } else {
-            console.log(5);
-            await github.rest.issues.createComment({
+            github.rest.issues.createComment({
               owner: 'IndranilKhedkar',
               repo: 'github-actions',
               issue_number: context.payload.number,
               body: ${{ inputs.comment-body }},
             });
           }
-
-          console.log(6);
