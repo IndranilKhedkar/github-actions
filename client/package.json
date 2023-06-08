@@ -1,0 +1,23 @@
+{
+  "name": "client",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test:unit": "vitest",
+    "test:unit:coverage": "vitest --coverage.enabled --coverage.perFile --coverage.provider=c8 --coverage.reporter=lcov --coverage.reporter=text",
+    "test:unit:ci": "vitest run",
+    "test:unit:ci:coverage": "vitest run --reporter=default --reporter=html --outputFile.html=./test-results/index.html --reporter=junit --outputFile.junit=./test-results/junit-unit-test-result.xml --coverage.enabled --coverage.all --coverage.provider=c8 --coverage.reporter=lcov --coverage.reporter=text"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@vitest/coverage-c8": "^0.31.3",
+    "typescript": "^5.0.4",
+    "vitest": "^0.31.3",
+    "vitest-sonar-reporter": "^0.4.1"
+  },
+  "devDependencies": {
+    "@vitest/ui": "^0.31.3"
+  }
+}

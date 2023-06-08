@@ -1,0 +1,154 @@
+name: Run Tests
+
+on:
+  - push
+  - pull_request
+
+jobs:
+  unit:
+    name: Unit Tests
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      issues: read
+      checks: write
+      statuses: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          check-latest: true
+
+      - name: Install dependencies
+        run: |
+          cd client
+          npm install
+
+      - name: Run unit tests
+        run: |
+          cd client
+          npm run test:unit:ci:coverage
+
+      - name: Upload unit test results
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-results
+          path: client/test-results
+          retention-days: 1
+
+      - name: Upload code coverage report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage
+          path: client/coverage
+          retention-days: 1
+
+      - name: Publish test results
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          files: client/test-results/junit-unit-test-result.xml
+          report_individual_runs: true
+
+      - name: Publish code coverage report
+        uses: ./.github/workflows/publish.yml
+        if: github.event_name == 'pull_request'
+
+  # publish_code_coverage:
+  #   name: Publish code coverage report
+  #   timeout-minutes: 10
+  #   runs-on: ubuntu-latest
+  #   needs: unit
+
+  #   if: github.event_name == 'pull_request'
+
+  #   permissions:
+  #     contents: write
+  #     issues: read
+  #     pull-requests: write
+
+  #   steps:
+  #     - name: Checkout gh-pages branch
+  #       uses: actions/checkout@v3
+  #       with:
+  #         ref: gh-pages
+
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: coverage
+  #         path: artifacts/coverage
+
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v3
+  #       with:
+  #         name: test-results
+  #         path: artifacts/test-results
+
+  #     - name: Set the branch name
+  #       run: |
+  #         echo "branch_name=${{ github.head_ref || github.ref_name }}" >> "$GITHUB_ENV"
+
+  #     - name: Commit reports
+  #       run: |          
+  #         mkdir -p reports
+  #         cd reports
+          
+  #         echo ${{ env.branch_name }}
+
+  #         mkdir -p ${{ env.branch_name }}
+  #         cd ${{ env.branch_name }}
+          
+  #         rm -rf *
+          
+  #         cp -R ${{ github.workspace }}/artifacts/* .
+  #         rm -R ${{ github.workspace }}/artifacts/
+          
+  #         git config user.name github-actions
+  #         git config user.email github-actions@github.com
+  #         git status
+  #         git add .
+  #         git commit -am ${{ env.branch_name }}
+  #         git push
+
+  #     - name: Comment code coverage report link
+  #       uses: actions/github-script@v6
+  #       with:
+  #         script: |
+  #           // Get the list of existing comments.
+  #           const { data: comments } = await github.rest.issues.listComments({
+  #             owner: context.repo.owner,
+  #             repo: context.repo.repo,
+  #             issue_number: context.payload.number,
+  #           });
+            
+  #           // Find any comment already made by the bot. Github BotId = 41898282 
+  #           const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes('## Code Coverage<br/>'));
+  #           const commentBody = `## Code Coverage<br/>
+  #           Report for commit [${{ github.event.pull_request.head.sha }}](https://indranilkhedkar.github.io/GithubActions/reports/${{ env.branch_name }}/coverage/lcov-report/index.html).`;
+            
+  #           if(botComment) {
+  #             await github.rest.issues.updateComment({
+  #               owner: context.repo.owner,
+  #               repo: context.repo.repo,
+  #               comment_id: botComment.id,
+  #               body: `${commentBody}<br />
+  #               :recycle: This comment has been updated with latest results.`,
+  #             });
+  #           } else {
+  #             await github.rest.issues.createComment({
+  #               owner: context.repo.owner,
+  #               repo: context.repo.repo,
+  #               issue_number: context.payload.number,
+  #               body: commentBody,
+  #             });
+  #           }
