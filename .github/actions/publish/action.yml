@@ -63,6 +63,7 @@ runs:
 
     - name: Comment code coverage report link
       uses: actions/github-script@v6
+      shell: bash
       with:
         github-token: ${{ inputs.github-token }}
         script: |
