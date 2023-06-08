@@ -61,7 +61,7 @@ jobs:
 
   publish_code_coverage:
     name: Publish code coverage report
-    uses: IndranilKhedkar/github-actions/.github/actions/publish.yml@test-github-actions
+    uses: IndranilKhedkar/github-actions/.github/workflows/publish.yml@test-github-actions
     needs: unit
 
   # publish_code_coverage:
