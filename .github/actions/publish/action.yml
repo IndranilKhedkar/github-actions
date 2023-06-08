@@ -61,8 +61,7 @@ runs:
         git commit -am ${{ env.branch_name }}
         git push
 
-        console.log(context);
-        console.log(${{ inputs.github-token }});
+        echo '${{ inputs.github-token }}'
 
     - name: Comment code coverage report link
       uses: actions/github-script@v6
@@ -70,6 +69,9 @@ runs:
         github-token: ${{ inputs.github-token }}
         script: |
           // Get the list of existing comments.
+          console.log(context);
+          console.log(${{ inputs.github-token }});
+          
           const { data: comments } = await github.rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
@@ -80,7 +82,7 @@ runs:
           const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes('## Code Coverage<br/>'));
           # const commentBody = `## Code Coverage<br/>
           # Report for commit [${{ github.event.pull_request.head.sha }}](https://indranilkhedkar.github.io/GithubActions/reports/${{ env.branch_name }}/coverage/lcov-report/index.html).`;
-          
+
           if(botComment) {
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
