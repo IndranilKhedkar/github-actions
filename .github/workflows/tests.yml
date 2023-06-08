@@ -59,9 +59,10 @@ jobs:
           files: client/test-results/junit-unit-test-result.xml
           report_individual_runs: true
 
-      - name: Publish code coverage report
-        uses: IndranilKhedkar/github-actions/.github/actions/publish.yml@test-github-actions
-        if: github.event_name == 'pull_request'
+  publish_code_coverage:
+    name: Publish code coverage report
+    uses: IndranilKhedkar/github-actions/.github/actions/publish.yml@test-github-actions
+    needs: unit
 
   # publish_code_coverage:
   #   name: Publish code coverage report
