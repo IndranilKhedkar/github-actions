@@ -61,6 +61,9 @@ runs:
         git commit -am ${{ env.branch_name }}
         git push
 
+        console.log(context);
+        console.log(${{ inputs.github-token }});
+
     - name: Comment code coverage report link
       uses: actions/github-script@v6
       with:
