@@ -60,7 +60,7 @@ jobs:
           report_individual_runs: true
 
       - name: Publish code coverage report
-        uses: IndranilKhedkar/github-actions/.github/workflows/publish.yml@test-github-actions
+        uses: IndranilKhedkar/github-actions/.github/actions/publish.yml@test-github-actions
         if: github.event_name == 'pull_request'
 
   # publish_code_coverage:
