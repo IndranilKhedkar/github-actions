@@ -60,22 +60,20 @@ jobs:
           report_individual_runs: true
 
   publish_code_coverage:
+    name: Publish code coverage report
+    timeout-minutes: 10
+
     permissions:
       contents: write
       issues: read
       pull-requests: write
-      
-    needs: unit
-    
-    if: github.event_name == 'pull_request'
 
-    steps:
-      - name: Publish code coverage report
-        uses: IndranilKhedkar/github-actions/.github/workflows/publish.yml@test-github-actions
-        with:
-          comment-body: >
-            ## Code Coverage<br/>
-            Report for commit [${{ github.event.pull_request.head.sha }}](https://indranilkhedkar.github.io/GithubActions/reports/${{ env.branch_name }}/coverage/lcov-report/index.html).
+    uses: IndranilKhedkar/github-actions/.github/workflows/publish.yml@test-github-actions
+    needs: unit
+    with:
+      comment-body: >
+        ## Code Coverage<br/>
+        Report for commit [${{ github.event.pull_request.head.sha }}](https://indranilkhedkar.github.io/GithubActions/reports/${{ env.branch_name }}/coverage/lcov-report/index.html).
 
   # publish_code_coverage:
   #   name: Publish code coverage report
