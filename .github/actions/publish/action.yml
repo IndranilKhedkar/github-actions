@@ -66,15 +66,21 @@ runs:
       with:
         github-token: ${{ inputs.github-token }}
         script: |
+          console.log(1);
+          console.log('context', JSON.stringify(context));
+
           const { data: comments } = await github.rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
             issue_number: context.payload.number,
           });
           
+          console.log(2);
           const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes('## Code Coverage<br/>'));
+          console.log(3);
           
           if(botComment) {
+            console.log(4);
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -83,6 +89,7 @@ runs:
               :recycle: This comment has been updated with latest results.`,
             });
           } else {
+            console.log(5);
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -90,3 +97,5 @@ runs:
               body: ${{ inputs.comment-body }},
             });
           }
+
+          console.log(6);
