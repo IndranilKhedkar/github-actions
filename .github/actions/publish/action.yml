@@ -3,10 +3,10 @@ name: Publish
 description: 'Publish test results'
 
 inputs:
-  github-token:
-    description: "Github token"
-    required: true
-    type: string
+  # github-token:
+  #   description: "Github token"
+  #   required: true
+  #   type: string
   comment-body:
     description: "Comment to be added on pull request"
     required: true
@@ -64,7 +64,7 @@ runs:
     - name: Comment code coverage report link
       uses: actions/github-script@v6
       with:
-        github-token: ${{ inputs.github-token }}
+        # github-token: ${{ inputs.github-token }}
         script: |
           try {
             const { data: comments } = await github.rest.issues.listComments({
