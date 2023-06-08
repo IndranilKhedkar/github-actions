@@ -31,6 +31,8 @@ jobs:
         run: |
           cd client
           npm install
+          cd ..
+          ls -R
 
       - name: Run unit tests
         run: |
