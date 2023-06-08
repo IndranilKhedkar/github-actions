@@ -64,7 +64,7 @@ jobs:
         uses: actions/github-script@v6
         with:
           script: |
-            console.log('context', context);
+            console.log('context', context.repo.owner, context.repo.repo, context.payload.number);
 
       - name: Publish code coverage report
         uses: IndranilKhedkar/github-actions/.github/actions/publish@test-github-actions
