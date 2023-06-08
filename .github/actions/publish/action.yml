@@ -3,10 +3,10 @@ name: Publish
 description: 'Publish test results'
 
 inputs:
-  github-token:
-    description: "Github token"
-    required: true
-    type: string
+  # github-token:
+  #   description: "Github token"
+  #   required: true
+  #   type: string
   comment-body:
     description: "Comment to be added on pull request"
     required: true
@@ -19,7 +19,7 @@ runs:
       uses: actions/checkout@v3
       with:
         ref: gh-pages
-        token: ${{ inputs.github-token }}
+        # token: ${{ inputs.github-token }}
 
     - name: Download artifacts
       uses: actions/download-artifact@v3
@@ -61,17 +61,17 @@ runs:
         git commit -am ${{ env.branch_name }}
         git push
 
-        echo '${{ inputs.github-token }}'
+        # echo '${{ inputs.github-token }}'
 
     - name: Comment code coverage report link
       uses: actions/github-script@v6
       with:
-        github-token: ${{ inputs.github-token }}
+        # github-token: ${{ inputs.github-token }}
         script: |
           // Get the list of existing comments.
-          console.log(context);
-          console.log(${{ inputs.github-token }});
-          
+          console.log(context.repo);
+          # console.log(${{ inputs.github-token }});
+
           const { data: comments } = await github.rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
