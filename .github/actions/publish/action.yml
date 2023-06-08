@@ -64,8 +64,6 @@ runs:
     - name: Comment code coverage report link
       uses: actions/github-script@v6
       with:
-        console.log(context);
-        console.log(${{ inputs.github-token }});
         github-token: ${{ inputs.github-token }}
         script: |
           // Get the list of existing comments.
