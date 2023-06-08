@@ -1,7 +1,6 @@
 name: Run Tests
 
 on:
-  - push
   - pull_request
 
 jobs:
@@ -31,6 +30,8 @@ jobs:
         run: |
           cd client
           npm install
+          cd ..
+          ls -R
 
       - name: Run unit tests
         run: |
@@ -63,6 +64,7 @@ jobs:
         uses: ./.github/actions/publish
         if: github.event_name == 'pull_request'
         with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-body: >
             ## Code Coverage<br/>
             Report for commit [${{ github.event.pull_request.head.sha }}](https://indranilkhedkar.github.io/GithubActions/reports/${{ env.branch_name }}/coverage/lcov-report/index.html).
