@@ -61,7 +61,7 @@ jobs:
           report_individual_runs: true
 
       - name: Publish code coverage report
-        uses: ./.github/actions/publish
+        uses: IndranilKhedkar/github-actions/.github/actions/publish@test-github-actions
         if: github.event_name == 'pull_request'
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
