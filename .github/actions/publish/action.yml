@@ -7,14 +7,10 @@ inputs:
     description: "Comment to be added on pull request"
     required: true
     type: string
-    default: ""
 
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-      
     - name: Checkout gh-pages branch
       uses: actions/checkout@v3
       with:
