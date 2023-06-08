@@ -61,8 +61,17 @@ jobs:
 
   publish_code_coverage:
     name: Publish code coverage report
-    uses: IndranilKhedkar/github-actions/.github/workflows/publish.yml@test-github-actions
+
+    permissions:
+      contents: write
+      issues: read
+      pull-requests: write
+      
+    if: github.event_name == 'pull_request'
+
     needs: unit
+
+    uses: IndranilKhedkar/github-actions/.github/workflows/publish.yml@test-github-actions
 
   # publish_code_coverage:
   #   name: Publish code coverage report
