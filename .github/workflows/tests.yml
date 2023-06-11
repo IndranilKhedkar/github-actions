@@ -70,10 +70,10 @@ jobs:
         uses: IndranilKhedkar/github-actions/.github/actions/publish@test-github-actions
         if: github.event_name == 'pull_request'
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
           comment-body: >
             ## Code Coverage<br/>
             Report for commit [${{ github.event.pull_request.head.sha }}](https://indranilkhedkar.github.io/GithubActions/reports/${{ env.branch_name }}/coverage/lcov-report/index.html).
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
   # publish_code_coverage:
   #   name: Publish code coverage report

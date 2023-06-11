@@ -61,14 +61,16 @@ runs:
         git commit -am ${{ env.branch_name }}
         git push
 
+        echo ${{ inputs.github-token }}
+        echo ${{ inputs.comment-body }}
+
     - name: Comment code coverage report link
       uses: actions/github-script@v6
       with:
         github-token: ${{ inputs.github-token }}
         debug: true
         script: |
-          console.log(${{ inputs.github-token }});
-          
+          console.log('succes');
           # try {
           #   const { data: comments } = await github.rest.issues.listComments({
           #     owner: 'IndranilKhedkar',
