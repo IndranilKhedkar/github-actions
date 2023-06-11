@@ -71,39 +71,3 @@ runs:
         debug: true
         script: |
           console.log('succes');
-          # try {
-          #   const { data: comments } = await github.rest.issues.listComments({
-          #     owner: 'IndranilKhedkar',
-          #     repo: 'github-actions',
-          #     issue_number: 3,
-          #   });
-          # } catch(e) {
-          #   console.log('1', e);
-          # }
-          # const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes('## Code Coverage<br/>'));
-          
-          # if(botComment) {
-          #   try {
-          #     await github.rest.issues.updateComment({
-          #       owner: 'IndranilKhedkar',
-          #       repo: 'github-actions',
-          #       comment_id: botComment.id,
-          #       body: `${{ inputs.comment-body }}<br />
-          #       :recycle: This comment has been updated with latest results.`,
-          #     });
-          #   } catch(e) {
-          #     console.log('2', e);
-          #   }
-          # } else {
-          #   try {
-          #     await github.rest.issues.createComment({
-          #       owner: 'IndranilKhedkar',
-          #       repo: 'github-actions',
-          #       issue_number: 3,
-          #       body: ${{ inputs.comment-body }},
-          #     }); 
-          #   } catch(e) {
-          #     console.log('3', e);
-          #   }
-
-          # }
