@@ -78,7 +78,7 @@ runs:
 
           console.log(comments);
 
-          const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes('## Code Coverage<br/>'));
+          const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes('## Code Coverage'));
           console.log(botComment);
 
           const commentBody = '${{ inputs.comment-body }}';
