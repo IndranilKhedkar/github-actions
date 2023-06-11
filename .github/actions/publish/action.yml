@@ -82,7 +82,6 @@ runs:
           console.log(botComment);
 
           const commentBody = '${{ inputs.comment-body }}';
-          console.log(commentBody);
           
           if(botComment) {
             await github.rest.issues.updateComment({
