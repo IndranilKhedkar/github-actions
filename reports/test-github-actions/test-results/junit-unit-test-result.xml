@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="10" failures="0" errors="0" time="1.862">
-    <testsuite name="src/tools/__tests__/getAllCountries.ts" timestamp="2023-06-11T12:01:13.367Z" hostname="fv-az1244-385" tests="1" failures="0" errors="0" skipped="0" time="0.006">
+<testsuites name="vitest tests" tests="10" failures="0" errors="0" time="1.82">
+    <testsuite name="src/tools/__tests__/getAllCountries.ts" timestamp="2023-06-11T12:03:09.905Z" hostname="fv-az309-59" tests="1" failures="0" errors="0" skipped="0" time="0.008">
         <testcase classname="src/tools/__tests__/getAllCountries.ts" name="returns expected list of countries" time="0.004">
         </testcase>
     </testsuite>
-    <testsuite name="src/tools/__tests__/getBytesWithUnit.ts" timestamp="2023-06-11T12:01:13.369Z" hostname="fv-az1244-385" tests="2" failures="0" errors="0" skipped="0" time="0.004">
+    <testsuite name="src/tools/__tests__/getBytesWithUnit.ts" timestamp="2023-06-11T12:03:09.908Z" hostname="fv-az309-59" tests="2" failures="0" errors="0" skipped="0" time="0.01">
         <testcase classname="src/tools/__tests__/getBytesWithUnit.ts" name="getBytesWithUnit &gt; can convert a bytes value into the most appropriate unit" time="0.001">
         </testcase>
-        <testcase classname="src/tools/__tests__/getBytesWithUnit.ts" name="getBytesWithUnit &gt; can convert a bytes value into the most appropriate unit with a given precision" time="0">
+        <testcase classname="src/tools/__tests__/getBytesWithUnit.ts" name="getBytesWithUnit &gt; can convert a bytes value into the most appropriate unit with a given precision" time="0.001">
         </testcase>
     </testsuite>
-    <testsuite name="src/tools/__tests__/hasRight.ts" timestamp="2023-06-11T12:01:13.375Z" hostname="fv-az1244-385" tests="3" failures="0" errors="0" skipped="0" time="0.004">
+    <testsuite name="src/tools/__tests__/hasRight.ts" timestamp="2023-06-11T12:03:09.914Z" hostname="fv-az309-59" tests="3" failures="0" errors="0" skipped="0" time="0.004">
         <testcase classname="src/tools/__tests__/hasRight.ts" name="returns true for user with given right" time="0.001">
         </testcase>
         <testcase classname="src/tools/__tests__/hasRight.ts" name="returns false for user without given right" time="0">
@@ -18,16 +18,16 @@
         <testcase classname="src/tools/__tests__/hasRight.ts" name="returns false for user with no rights" time="0">
         </testcase>
     </testsuite>
-    <testsuite name="src/tools/__tests__/isAdmin.ts" timestamp="2023-06-11T12:01:13.377Z" hostname="fv-az1244-385" tests="2" failures="0" errors="0" skipped="0" time="0.003">
+    <testsuite name="src/tools/__tests__/isAdmin.ts" timestamp="2023-06-11T12:03:09.915Z" hostname="fv-az309-59" tests="2" failures="0" errors="0" skipped="0" time="0.003">
         <testcase classname="src/tools/__tests__/isAdmin.ts" name="returns true for admin user" time="0.001">
         </testcase>
         <testcase classname="src/tools/__tests__/isAdmin.ts" name="returns false for non-admin user" time="0">
         </testcase>
     </testsuite>
-    <testsuite name="src/tools/__tests__/isOctave.ts" timestamp="2023-06-11T12:01:13.377Z" hostname="fv-az1244-385" tests="2" failures="0" errors="0" skipped="0" time="0.003">
+    <testsuite name="src/tools/__tests__/isOctave.ts" timestamp="2023-06-11T12:03:09.916Z" hostname="fv-az309-59" tests="2" failures="0" errors="0" skipped="0" time="0.003">
         <testcase classname="src/tools/__tests__/isOctave.ts" name="returns true for user account type as &quot;BROOKLYN&quot;" time="0.001">
         </testcase>
-        <testcase classname="src/tools/__tests__/isOctave.ts" name="returns false for account type other than &quot;BROOKLYN&quot;" time="0.001">
+        <testcase classname="src/tools/__tests__/isOctave.ts" name="returns false for account type other than &quot;BROOKLYN&quot;" time="0">
         </testcase>
     </testsuite>
 </testsuites>
