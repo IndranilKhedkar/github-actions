@@ -64,6 +64,12 @@ runs:
         echo ${{ inputs.github-token }}
         echo ${{ inputs.comment-body }}
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16'
+        check-latest: true
+
     - name: Comment code coverage report link
       uses: actions/github-script@v6
       with:
