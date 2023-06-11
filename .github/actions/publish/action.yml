@@ -79,7 +79,7 @@ runs:
           console.log('succes');
 
           # Get the list of existing comments.
-          var result = await github.rest.issues.listComments({
+          var result = github.rest.issues.listComments({
             owner: 'IndranilKhedkar',
             repo: 'github-actions',
             issue_number: 3,
