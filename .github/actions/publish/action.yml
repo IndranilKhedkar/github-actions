@@ -76,10 +76,12 @@ runs:
             repo: context.repo.repo,
             issue_number: context.payload.number
           });
+
+          console.log(comments);
           
           // Find any comment already made by the bot. Github BotId = 41898282 
-          const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes('## Code Coverage<br/>'));
+          // const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes('## Code Coverage<br/>'));
           // const commentBody = '${{ inputs.comment-body }}'
 
-          console.log(botComment);
+          // console.log(botComment);
           // console.log('${{ inputs.comment-body }}');
