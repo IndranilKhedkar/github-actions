@@ -82,4 +82,4 @@ runs:
           // const commentBody = '${{ inputs.comment-body }}'
 
           console.log(botComment);
-          console.log('${{ inputs.comment-body }}');
+          // console.log('${{ inputs.comment-body }}');
