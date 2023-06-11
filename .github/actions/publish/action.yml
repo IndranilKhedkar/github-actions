@@ -80,5 +80,5 @@ runs:
 
           const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes('## Code Coverage<br/>'));
           console.log(botComment);
-          console.log('${{ inputs.comment-body }}');
+          console.log(${{ inputs.comment-body }});
 
