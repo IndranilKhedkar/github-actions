@@ -65,6 +65,7 @@ runs:
       uses: actions/github-script@v6
       with:
         github-token: ${{ inputs.github-token }}
+        debug: true
         script: |
           console.log(${{ inputs.github-token }});
           
