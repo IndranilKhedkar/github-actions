@@ -72,16 +72,17 @@ runs:
 
     - name: Comment code coverage report link
       uses: actions/github-script@v6
+      id: 'code-coverage-report'
       with:
         debug: true
         script: |
           console.log('succes');
 
-          # Get the list of existing comments.
+          // Get the list of existing comments.
           res = await github.rest.issues.listComments({
             owner: 'IndranilKhedkar',
             repo: 'github-actions',
-            issue_number: 3,
+            issue_number: 3
           });
 
           console.log(res);
