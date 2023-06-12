@@ -4,15 +4,15 @@ description: 'Publish report to gh-pages'
 
 inputs:
   comment-title:
-    description: "Pull request comment title"
+    description: 'Pull request comment title'
     required: true
     type: string
   comment-body:
-    description: "Pull request comment body"
+    description: 'Pull request comment body'
     required: true
     type: string
   artifact-name:
-    description: "Artifact to be published to gh-pages"
+    description: 'Artifact to be published to gh-pages'
     required: true
     type: string
 
@@ -62,7 +62,6 @@ runs:
       if: github.event_name == 'pull_request'
       with:
         script: |
-          console.log(github);
           const { data: comments } = await github.rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
