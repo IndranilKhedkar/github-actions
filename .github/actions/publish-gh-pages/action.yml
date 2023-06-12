@@ -57,10 +57,12 @@ runs:
         git commit -am ${{ env.branch_name }} || true
         git push
 
-    - name: Comment report details
+    - name: Comment report details on pull request
       uses: actions/github-script@v6
+      if: github.event_name == 'pull_request'
       with:
         script: |
+          console.log(github);
           const { data: comments } = await github.rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
