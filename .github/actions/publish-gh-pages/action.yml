@@ -34,7 +34,7 @@ runs:
       shell: bash
       run: |
         echo "branch_name=${{ github.head_ref || github.ref_name }}" >> "$GITHUB_ENV"
-        echo ${{ env.branch_name }}    
+        echo ${{ github.head_ref || github.ref_name }}
 
     - name: Commit reports
       shell: bash
@@ -67,7 +67,6 @@ runs:
             issue_number: context.payload.number
           });
 
-          console.log(`## ${{ inputs.comment-title }}`);
           const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes(`## ${{ inputs.comment-title }}`));
           const comment = `## ${{ inputs.comment-title }}\n\n${{ inputs.comment-body }}`
           
@@ -86,4 +85,3 @@ runs:
               body: comment,
             });
           }
-
