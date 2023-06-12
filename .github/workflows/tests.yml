@@ -58,18 +58,10 @@ jobs:
           files: client/test-results/junit-unit-test-result.xml
           report_individual_runs: true
 
-      - name: Publish code coverage report 1
+      - name: Publish code coverage report
         uses: IndranilKhedkar/github-actions/.github/actions/publish-gh-pages@test-github-actions
         if: github.event_name == 'pull_request'
         with:
-          comment-title: 'Code Coverage 1'
-          comment-body: 'Report for commit [${{ github.event.pull_request.head.sha }}](https://indranilkhedkar.github.io/github-actions/reports/${{ github.head_ref || github.ref_name }}/coverage).'
-          artifact-name: 'coverage'
-
-      - name: Publish code coverage report 2
-        uses: IndranilKhedkar/github-actions/.github/actions/publish-gh-pages@test-github-actions
-        if: github.event_name == 'pull_request'
-        with:
-          comment-title: 'Code Coverage 2'
+          comment-title: 'Code Coverage'
           comment-body: 'Report for commit [${{ github.event.pull_request.head.sha }}](https://indranilkhedkar.github.io/github-actions/reports/${{ github.head_ref || github.ref_name }}/coverage).'
           artifact-name: 'coverage'

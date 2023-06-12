@@ -48,7 +48,8 @@ runs:
         rm -rf *
         
         cp -R ${{ github.workspace }}/artifacts/* .
-        rm -R ${{ github.workspace }}/artifacts/
+        ls -R
+        rm -R ${{ github.workspace }}/artifacts/        
         
         git config user.name github-actions
         git config user.email github-actions@github.com
