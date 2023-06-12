@@ -3,10 +3,6 @@ name: Publish
 description: 'Publish test results'
 
 inputs:
-  github-token:
-    description: "Github token"
-    required: true
-    type: string
   comment-body:
     description: "Comment to be added on pull request"
     required: true
@@ -26,12 +22,6 @@ runs:
       with:
         name: coverage
         path: artifacts/coverage
-
-    - name: Download artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: test-results
-        path: artifacts/test-results
 
     - name: Set the branch name
       shell: bash
@@ -60,9 +50,6 @@ runs:
         git add .
         git commit -am ${{ env.branch_name }}
         git push
-
-        echo ${{ inputs.github-token }}
-        echo ${{ inputs.comment-body }}
 
     - name: Comment code coverage report link
       uses: actions/github-script@v6
