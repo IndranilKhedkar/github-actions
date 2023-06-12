@@ -1,14 +1,18 @@
 name: Publish
 
-description: 'Publish test results'
+description: 'Publish report to gh-pages'
 
 inputs:
-  github-token:
-    description: "Github token"
+  comment-title:
+    description: "Pull request comment title"
     required: true
     type: string
   comment-body:
-    description: "Comment to be added on pull request"
+    description: "Pull request comment body"
+    required: true
+    type: string
+  artifact-name:
+    description: "Artifact to be published to gh-pages"
     required: true
     type: string
 
@@ -19,32 +23,24 @@ runs:
       uses: actions/checkout@v3
       with:
         ref: gh-pages
-        token: ${{ inputs.github-token }}
 
     - name: Download artifacts
       uses: actions/download-artifact@v3
       with:
-        name: coverage
-        path: artifacts/coverage
-
-    - name: Download artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: test-results
-        path: artifacts/test-results
+        name: ${{ inputs.artifact-name }}
+        path: artifacts/${{ inputs.artifact-name }}
 
     - name: Set the branch name
       shell: bash
       run: |
         echo "branch_name=${{ github.head_ref || github.ref_name }}" >> "$GITHUB_ENV"
+        echo ${{ github.head_ref || github.ref_name }}
 
     - name: Commit reports
       shell: bash
-      run: |          
+      run: |      
         mkdir -p reports
         cd reports
-        
-        echo ${{ env.branch_name }}
 
         mkdir -p ${{ env.branch_name }}
         cd ${{ env.branch_name }}
@@ -57,40 +53,34 @@ runs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         git status
-        git add .
-        git commit -am ${{ env.branch_name }}
+        git diff --quiet && git diff --staged --quiet || git commit -am ${{ env.branch_name }}
         git push
 
-    - name: Comment code coverage report link
+    - name: Comment report details
       uses: actions/github-script@v6
       with:
-        github-token: ${{ inputs.github-token }}
         script: |
-          // Get the list of existing comments.
           const { data: comments } = await github.rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
-            issue_number: context.payload.number,
+            issue_number: context.payload.number
           });
-          
-          // Find any comment already made by the bot. Github BotId = 41898282 
-          const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes('## Code Coverage<br/>'));
-          # const commentBody = `## Code Coverage<br/>
-          # Report for commit [${{ github.event.pull_request.head.sha }}](https://indranilkhedkar.github.io/GithubActions/reports/${{ env.branch_name }}/coverage/lcov-report/index.html).`;
+
+          const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes(`## ${{ inputs.comment-title }}`));
+          const comment = `## ${{ inputs.comment-title }}\n\n${{ inputs.comment-body }}`
           
           if(botComment) {
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: botComment.id,
-              body: `${{ inputs.comment-body }}<br />
-              :recycle: This comment has been updated with latest results.`,
+              body: `${comment}\n\n:recycle: This comment has been updated with latest results.`,
             });
           } else {
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.number,
-              body: ${{ inputs.comment-body }},
+              body: comment,
             });
           }

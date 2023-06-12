@@ -1,0 +1,35 @@
+name: Cleanup gh-pages 
+
+description: 'Cleanup reports in gh-pages'
+
+inputs:
+  branch-name:
+    description: "Branch name whose reports needs to be cleaned up"
+    default: ${{ github.head_ref || github.ref_name }}
+    required: false
+    type: string
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout gh-pages branch
+      uses: actions/checkout@v3
+      with:
+        ref: gh-pages
+
+    - name: Cleanup reports folder
+      shell: bash
+      env:
+        BRANCH_NAME: ${{ inputs.branch-name }}
+      run: |
+        cd reports
+        cd $BRANCH_NAME
+        
+        rm -rf *
+        
+        git config user.name github-actions
+        git config user.email github-actions@github.com
+
+        git status
+        git diff --quiet && git diff --staged --quiet || git commit -am "Deleting $BRANCH_NAME folder contents."
+        git push origin
