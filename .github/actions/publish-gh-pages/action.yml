@@ -53,8 +53,7 @@ runs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         git status
-        git add .
-        git commit -am ${{ env.branch_name }}
+        git diff --quiet && git diff --staged --quiet || git commit -am ${{ env.branch_name }}
         git push
 
     - name: Comment report details
