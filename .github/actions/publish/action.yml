@@ -76,19 +76,14 @@ runs:
             issue_number: context.payload.number
           });
 
-          console.log(comments);
-
           const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes('## Code Coverage'));
-          console.log(botComment);
-
-          const commentBody = '${{ inputs.comment-body }}';
           
           if(botComment) {
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: botComment.id,
-              body: `${commentBody}<br />
+              body: `${{ inputs.comment-body }}<br />
               :recycle: This comment has been updated with latest results.`,
             });
           } else {
@@ -96,7 +91,7 @@ runs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.number,
-              body: commentBody,
+              body: '${{ inputs.comment-body }}',
             });
           }
 
