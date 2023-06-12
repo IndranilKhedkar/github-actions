@@ -38,7 +38,7 @@ runs:
 
     - name: Commit reports
       shell: bash
-      run: |      
+      run: |
         mkdir -p reports
         cd reports
 
@@ -53,7 +53,8 @@ runs:
         git config user.name github-actions
         git config user.email github-actions@github.com
         git status
-        git diff --quiet && git diff --staged --quiet || git commit -am ${{ env.branch_name }}
+        git add .
+        git commit -am ${{ env.branch_name }} || true
         git push
 
     - name: Comment report details
