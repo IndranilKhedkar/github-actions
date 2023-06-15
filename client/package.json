@@ -4,10 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "postinstall": "if [ -s node_modules/.bin/patch-package ]; then patch-package; fi",
     "test:unit": "vitest",
-    "test:unit:coverage": "vitest --coverage.enabled --coverage.perFile --coverage.provider=c8 --coverage.reporter=lcov --coverage.reporter=text",
+    "test:unit:coverage": "vitest --coverage.enabled --coverage.perFile --coverage.provider=c8 --coverage.reporter=html --coverage.reporter=text",
     "test:unit:ci": "vitest run",
-    "test:unit:ci:coverage": "vitest run --reporter=default --reporter=junit --outputFile.junit=./test-results/junit-unit-test-result.xml --coverage.enabled --coverage.all --coverage.provider=c8 --coverage.reporter=html --coverage.reporter=text"
+    "test:unit:ci:coverage": "vitest run --reporter=default --reporter=html --outputFile.html=./reports/unit-tests/index.html --reporter=junit --outputFile.junit=./reports/unit-tests-junit.xml --coverage.enabled --coverage.all --coverage.provider=c8 --coverage.reporter=html --coverage.reportsDirectory=./reports/unit-tests-coverage --coverage.reporter=text"
   },
   "author": "",
   "license": "ISC",
@@ -18,6 +19,7 @@
     "vitest-sonar-reporter": "^0.4.1"
   },
   "devDependencies": {
-    "@vitest/ui": "^0.31.3"
+    "@vitest/ui": "^0.32.0",
+    "patch-package": "^7.0.0"
   }
 }
