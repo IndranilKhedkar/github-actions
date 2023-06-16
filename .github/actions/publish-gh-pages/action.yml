@@ -28,7 +28,7 @@ runs:
       uses: actions/download-artifact@v3
       with:
         name: ${{ inputs.artifact-name }}
-        path: artifacts/${{ inputs.artifact-name }}
+        path: artifacts
 
     - name: Set the branch name
       shell: bash
@@ -62,7 +62,6 @@ runs:
       if: github.event_name == 'pull_request'
       with:
         script: |
-          console.log(github);
           const { data: comments } = await github.rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
