@@ -59,7 +59,7 @@ runs:
           for path in "${artifact_paths[@]}"
           do
             echo $path
-            cp -R ${{ github.workspace }}/artifacts/$path/* .
+            cp -R ${{ github.workspace }}/artifacts/$path .
             ls -R ${{ github.workspace }}/artifacts/$path
           done
         fi
