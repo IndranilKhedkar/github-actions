@@ -51,14 +51,14 @@ jobs:
         if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          files: client/reports/junit-unit-test-result.xml
+          files: client/reports/unit-tests-junit.xml
           report_individual_runs: true
 
       - name: Set environment variables
         shell: bash
         run: |
-          echo "sha_short=$(git rev-parse --short HEAD)" >> "$GITHUB_ENV"
-          echo $(git rev-parse --short HEAD)
+          echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> "$GITHUB_ENV"
+          echo $(git rev-parse --short ${{ github.event.pull_request.head.sha }})
 
       - name: Publish unit test reports
         uses: IndranilKhedkar/github-actions/.github/actions/publish-gh-pages@test-github-actions
