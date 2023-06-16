@@ -54,7 +54,7 @@ jobs:
           files: client/reports/unit-tests-junit.xml
           report_individual_runs: true
 
-      - name: Set output variable
+      - name: Set output variables
         id: vars
         run: |
           echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_OUTPUT
@@ -68,3 +68,4 @@ jobs:
             Test results report for commit [${{ steps.vars.outputs.sha_short }}](https://indranilkhedkar.github.io/github-actions/reports/${{ github.head_ref || github.ref_name }}/unit-tests)
             Code coverage report for commit [${{ steps.vars.outputs.sha_short }}](https://indranilkhedkar.github.io/github-actions/reports/${{ github.head_ref || github.ref_name }}/unit-tests-coverage)
           artifact-name: 'reports'
+          publish-artifact-paths: 'unit-tests, unit-tests-coverage'

@@ -15,6 +15,10 @@ inputs:
     description: 'Artifact to be published to gh-pages'
     required: true
     type: string
+  publish-artifact-paths:
+    description: 'Comma separated list of artifact paths to be published to gh-pages. If not specified, publishes all entire content from artifact directory.'
+    required: false
+    type: string
 
 runs:
   using: "composite"
@@ -47,7 +51,19 @@ runs:
         
         rm -rf *
         
-        cp -R ${{ github.workspace }}/artifacts/* .
+        if [ -z "${{ inputs.publish-artifact-paths }}" ]
+          cp -R ${{ github.workspace }}/artifacts/* .
+        then
+        else
+          IFS=', ' read -r -a artifact_paths <<< "${{ inputs.publish-artifact-paths }}"
+          for path in "${artifact_paths[@]}"
+          do
+            echo $path
+            cp -R ${{ github.workspace }}/artifacts/$path/* .
+            ls -R ${{ github.workspace }}/artifacts/$path
+          done
+        fi
+        
         rm -R ${{ github.workspace }}/artifacts/
         
         git config user.name github-actions
