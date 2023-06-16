@@ -39,31 +39,33 @@ jobs:
           cd client
           npm run test:unit:ci:coverage
 
-      - name: Upload unit test results
+      - name: Upload unit test reports
         uses: actions/upload-artifact@v3
         with:
-          name: test-results
-          path: client/test-results
+          name: reports
+          path: client/reports
           retention-days: 1
 
-      - name: Upload code coverage report
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage
-          path: client/coverage
-          retention-days: 1
-
-      - name: Publish test results
+      - name: Publish unit test result
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          files: client/test-results/junit-unit-test-result.xml
+          files: client/reports/unit-tests-junit.xml
           report_individual_runs: true
 
-      - name: Publish code coverage report
+      - name: Set output variables
+        id: vars
+        run: |
+          echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_OUTPUT
+          echo $(git rev-parse --short ${{ github.event.pull_request.head.sha }})
+
+      - name: Publish unit test reports
         uses: IndranilKhedkar/github-actions/.github/actions/publish-gh-pages@test-github-actions
         with:
-          comment-title: 'Code Coverage'
-          comment-body: 'Report for commit [${{ github.event.pull_request.head.sha }}](https://indranilkhedkar.github.io/github-actions/reports/${{ github.head_ref || github.ref_name }}/coverage).'
-          artifact-name: 'coverage'
+          comment-title: 'Unit test reports'
+          comment-body: |
+            Test results report for commit [${{ steps.vars.outputs.sha_short }}](https://indranilkhedkar.github.io/github-actions/reports/${{ github.head_ref || github.ref_name }}/unit-tests)
+            Code coverage report for commit [${{ steps.vars.outputs.sha_short }}](https://indranilkhedkar.github.io/github-actions/reports/${{ github.head_ref || github.ref_name }}/unit-tests-coverage)
+          artifact-name: 'reports'
+          publish-artifact-paths: 'unit-tests, unit-tests-coverage'

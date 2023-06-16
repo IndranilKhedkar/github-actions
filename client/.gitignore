@@ -4,9 +4,7 @@
 /node_modules
 
 # testing
-/coverage
-/test-results
-junit.xml
+/reports
 
 # production
 /build
