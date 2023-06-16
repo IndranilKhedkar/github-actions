@@ -52,8 +52,8 @@ runs:
         rm -rf *
         
         if [ -z "${{ inputs.publish-artifact-paths }}" ]
-          cp -R ${{ github.workspace }}/artifacts/* .
         then
+          cp -R ${{ github.workspace }}/artifacts/* .
         else
           IFS=', ' read -r -a artifact_paths <<< "${{ inputs.publish-artifact-paths }}"
           for path in "${artifact_paths[@]}"
