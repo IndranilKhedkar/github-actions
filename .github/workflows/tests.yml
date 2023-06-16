@@ -68,4 +68,3 @@ jobs:
             Test results report for commit [${{ steps.vars.outputs.sha_short }}](https://indranilkhedkar.github.io/github-actions/reports/${{ github.head_ref || github.ref_name }}/unit-tests)
             Code coverage report for commit [${{ steps.vars.outputs.sha_short }}](https://indranilkhedkar.github.io/github-actions/reports/${{ github.head_ref || github.ref_name }}/unit-tests-coverage)
           artifact-name: 'reports'
-          publish-artifact-paths: 'unit-tests, unit-tests-coverage'
