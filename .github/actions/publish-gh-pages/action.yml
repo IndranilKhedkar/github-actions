@@ -91,7 +91,7 @@ runs:
 
           const botComment = comments.find(comment => comment.user.id === ${{ env.userid_github_bot }} && comment.body.includes(`## ${{ inputs.comment-title }}`));
           
-          const artifactsObj = JSON.parse(artifacts);
+          const artifactsObj = JSON.parse(${{ inputs.artifacts }});
           let commentBody = "";
           
           for (const key in artifactsObj) {
