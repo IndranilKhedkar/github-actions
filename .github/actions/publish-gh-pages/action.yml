@@ -64,8 +64,9 @@ runs:
           echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.key), \(.value)"' | while read artifact; do
             report="$(echo $artifact | cut -d',' -f2)"
             echo $report
+            echo ${{ github.workspace }}
+            ls -R .
             ls -R ${{ github.workspace }}/artifacts/
-
             cp -R ${{ github.workspace }}/artifacts/reports/$report .
             ls -R ${{ github.workspace }}/artifacts/reports/$report
           done
