@@ -65,5 +65,5 @@ jobs:
         with:
           comment-title: 'Unit test reports'
           domain: "https://indranilkhedkar.github.io"
-          artifacts: '{"Coverage report": "coverage", "Test results": "results"}'
+          artifacts: '{"Coverage report": "unit-tests-coverage", "Test results": "unit-tests"}'
 
