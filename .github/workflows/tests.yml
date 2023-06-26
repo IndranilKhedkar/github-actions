@@ -64,7 +64,6 @@ jobs:
         uses: IndranilKhedkar/github-actions/.github/actions/publish-gh-pages@test-github-actions
         with:
           comment-title: 'Unit test reports'
-          comment-body: |
-            Test results report for commit [${{ steps.vars.outputs.sha_short }}](https://indranilkhedkar.github.io/github-actions/reports/${{ github.head_ref || github.ref_name }}/unit-tests)
-            Code coverage report for commit [${{ steps.vars.outputs.sha_short }}](https://indranilkhedkar.github.io/github-actions/reports/${{ github.head_ref || github.ref_name }}/unit-tests-coverage)
-          artifact-name: 'reports'
+          domain: "https://indranilkhedkar.github.io"
+          artifacts: '{"Coverage report": "coverage", "Test results": "results"}'
+
