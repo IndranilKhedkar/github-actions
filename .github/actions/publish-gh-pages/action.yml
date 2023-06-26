@@ -40,7 +40,7 @@ runs:
         echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
         echo $(git rev-parse --short ${{ github.event.pull_request.head.sha }})
 
-        echo "USERID_GITHUB_BOT=41898282" >> $GITHUB_ENV
+        echo "userid_github_bot=41898282" >> $GITHUB_ENV
 
     - name: Commit reports
       shell: bash
@@ -89,7 +89,7 @@ runs:
             issue_number: context.payload.number
           });
 
-          const botComment = comments.find(comment => comment.user.id === $USERID_GITHUB_BOT && comment.body.includes(`## ${{ inputs.comment-title }}`));
+          const botComment = comments.find(comment => comment.user.id === ${{ env.userid_github_bot }} && comment.body.includes(`## ${{ inputs.comment-title }}`));
           
           const artifactsObj = JSON.parse(artifacts);
           let commentBody = "";
