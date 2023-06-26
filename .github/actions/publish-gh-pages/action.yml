@@ -65,9 +65,9 @@ runs:
             report="$(echo $artifact | cut -d',' -f2)"
             echo $report
             ls -R ${{ github.workspace }}/artifacts/
-            
-            cp -R ${{ github.workspace }}/artifacts/$report .
-            ls -R ${{ github.workspace }}/artifacts/$report
+
+            cp -R ${{ github.workspace }}/artifacts/reports/$report .
+            ls -R ${{ github.workspace }}/artifacts/reports/$report
           done
         fi
         
