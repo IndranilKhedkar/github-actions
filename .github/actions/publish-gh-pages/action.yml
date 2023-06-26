@@ -95,8 +95,10 @@ runs:
           let commentBody = "";
           
           for (const key in artifactsObj) {
-            commentBody += `- [${key}](${{ inputs.domain }}/${{ github.event.repository.name }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`
+            commentBody += `- [${key}]("${{ inputs.domain }}"/"${{ github.event.repository.name }}"/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`
           }
+
+          console.log(commentBody);
 
           const comment = `${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`
           
