@@ -53,12 +53,14 @@ runs:
         
         rm -rf *
 
+        echo "${{ inputs.artifacts }}"
+
         if [ -z "${{ inputs.artifacts }}" ]
         then
           echo "Please specify artifacts to be published to gh-pages"
           exit 1
         else
-          echo $result | jq -r 'to_entries[] | "\(.key), \(.value)"' | while read artifact; do
+          echo "${{ inputs.artifacts }}" | jq -r 'to_entries[] | "\(.key), \(.value)"' | while read artifact; do
             echo $artifact
             report="$(echo $artifact | cut -d',' -f2)"
             echo $report
