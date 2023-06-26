@@ -62,15 +62,14 @@ runs:
         else
           echo "Inside else block"
           echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.key), \(.value)"' | while read artifact; do
-            echo $artifact
             report="$(echo $artifact | cut -d',' -f2)"
             echo $report
+            ls -R ${{ github.workspace }}/artifacts/
+            
             cp -R ${{ github.workspace }}/artifacts/$report .
             ls -R ${{ github.workspace }}/artifacts/$report
           done
         fi
-        
-        cp -R ${{ github.workspace }}/artifacts/* .
         
         rm -R ${{ github.workspace }}/artifacts/
         
