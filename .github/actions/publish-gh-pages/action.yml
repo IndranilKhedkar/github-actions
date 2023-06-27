@@ -3,6 +3,10 @@ name: Publish gh-pages
 description: 'Action to publish report to gh-pages'
 
 inputs:
+  artifacts:
+    description: 'Artifacts to be published to gh-pages'
+    required: true
+    type: string
   domain:
     description: 'GH pages domain name'
     required: true
@@ -12,10 +16,6 @@ inputs:
     required: false
     type: string
     default: '## Test reports'
-  artifacts:
-    description: 'Artifacts to be published to gh-pages'
-    required: true
-    type: string
 
 runs:
   using: 'composite'
@@ -53,18 +53,12 @@ runs:
         
         rm -rf *
 
-        echo "${{ inputs.artifacts }}"
-
         if [ -z "${{ inputs.artifacts }}" ]
         then
           echo "Please specify artifacts to be published to gh-pages"
           exit 1
         else
-          echo "Inside else block"
           echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
-            echo $report_path
-            echo ${{ github.workspace }}
-            ls -R ${{ github.workspace }}/artifacts/
             cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
           done
         fi
@@ -91,20 +85,12 @@ runs:
 
           const botComment = comments.find(comment => comment.user.id === ${{ env.userid_github_bot }} && comment.body.includes(`## ${{ inputs.comment-title }}`));
           
-          console.log(botComment);
-          console.log(${{ env.userid_github_bot }});
-          console.log(`## ${{ inputs.comment-title }}`);
-
           const artifactsObj = JSON.parse(`${{ inputs.artifacts }}`);
           let commentBody = "";
-
-          console.log(artifactsObj);
 
           for (const key in artifactsObj) {
             commentBody += `- [${key}](${{ inputs.domain }}/${{ github.event.repository.name }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`
           }
-
-          console.log(commentBody);
 
           const comment = `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`
           
