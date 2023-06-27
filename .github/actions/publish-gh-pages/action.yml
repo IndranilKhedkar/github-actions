@@ -89,7 +89,7 @@ runs:
             issue_number: context.payload.number
           });
 
-          const botComment = comments.find(comment => comment.user.id === `${{ env.userid_github_bot }}` && comment.body.includes(`${{ inputs.comment-title }}`));
+          const botComment = comments.find(comment => comment.user.id === `${{ env.userid_github_bot }}` && comment.body.includes(`## ${{ inputs.comment-title }}`));
           
           console.log(botComment);
 
@@ -104,7 +104,7 @@ runs:
 
           console.log(commentBody);
 
-          const comment = `${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`
+          const comment = `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`
           
           if(botComment) {
             await github.rest.issues.updateComment({
