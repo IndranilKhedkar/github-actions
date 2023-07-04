@@ -74,7 +74,7 @@ runs:
       if: github.event_name == 'pull_request'
       env:
         BRANCH_NAME: ${{ github.head_ref }}
-        SHA_SHORT: ${{ $(git rev-parse --short ${{ github.event.pull_request.head.sha }}) }}
+        SHA_SHORT: ${{ git rev-parse --short ${{ github.event.pull_request.head.sha }} }}
       with:
         script: |
           const { data: comments } = await github.rest.issues.listComments({
