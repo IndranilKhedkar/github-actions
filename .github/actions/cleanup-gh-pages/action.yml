@@ -13,7 +13,7 @@ runs:
     - name: Cleanup reports folder
       shell: bash
       env:
-        BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
+        BRANCH_NAME: ${{ github.head_ref }}
       run: |
         cd reports
 
