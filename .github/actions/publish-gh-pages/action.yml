@@ -1,21 +1,18 @@
 name: Publish gh-pages
 
-description: 'Action to publish report to gh-pages'
+description: 'Action to publish reports to gh-pages'
 
 inputs:
   artifacts:
     description: 'Artifacts to be published to gh-pages'
     required: true
-    type: string
   domain:
     description: 'GH pages domain name'
     required: true
-    type: string
   comment-title:
     description: 'Comment title'
     required: false
-    type: string
-    default: '## Test reports'
+    default: 'Test reports'
 
 runs:
   using: 'composite'
@@ -31,11 +28,12 @@ runs:
         name: reports
         path: artifacts/reports
 
-    - name: Set environment variables
+    - name: Set the environment variables
       shell: bash
       run: |
         echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
-        echo ${{ github.head_ref || github.ref_name }}
+        echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
+        echo "userid_github_bot=41898282" >> $GITHUB_ENV
 
         echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
         echo $(git rev-parse --short ${{ github.event.pull_request.head.sha }})
@@ -45,25 +43,22 @@ runs:
     - name: Commit reports
       shell: bash
       run: |
-        mkdir -p reports
-        cd reports
-
-        mkdir -p ${{ env.branch_name }}
-        cd ${{ env.branch_name }}
-        
-        rm -rf *
-
         if [ -z "${{ inputs.artifacts }}" ]
         then
           echo "Please specify artifacts to be published to gh-pages"
           exit 1
-        else
-          echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
-            cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
-          done
         fi
+
+        mkdir -p reports/${{ env.branch_name }}
+        cd reports/${{ env.branch_name }}
         
-        rm -R ${{ github.workspace }}/artifacts/
+        rm -rf -- *
+
+        echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
+          cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
+        done
+        
+        rm -rf -- ${{ github.workspace }}/artifacts/
         
         git config user.name github-actions
         git config user.email github-actions@github.com
@@ -82,14 +77,16 @@ runs:
             repo: context.repo.repo,
             issue_number: context.payload.number
           });
-
-          const botComment = comments.find(comment => comment.user.id === ${{ env.userid_github_bot }} && comment.body.includes(`## ${{ inputs.comment-title }}`));
+          
+          const githubActionBotUser = await github.rest.users.getByUsername({ username: 'github-actions[bot]' });
+          
+          const botComment = comments.find(comment => comment.user.id === githubActionBotUser.data.id && comment.body.includes(`## ${{ inputs.comment-title }}`));
           
           const artifactsObj = JSON.parse(`${{ inputs.artifacts }}`);
           let commentBody = "";
-
+          
           for (const key in artifactsObj) {
-            commentBody += `- [${key}](${{ inputs.domain }}/${{ github.event.repository.name }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`
+            commentBody += `- [${key}](${{ inputs.domain }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`
           }
 
           const comment = `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`
