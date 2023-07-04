@@ -28,6 +28,18 @@ runs:
         name: reports
         path: artifacts/reports
 
+    - name: Set the environment variables
+      shell: bash
+      run: |
+        echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
+        echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
+        echo "userid_github_bot=41898282" >> $GITHUB_ENV
+
+        echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
+        echo $(git rev-parse --short ${{ github.event.pull_request.head.sha }})
+
+        echo "userid_github_bot=41898282" >> $GITHUB_ENV
+
     - name: Commit reports
       shell: bash
       env:
@@ -39,8 +51,8 @@ runs:
           exit 1
         fi
 
-        mkdir -p reports/$BRANCH_NAME
-        cd reports/$BRANCH_NAME
+        mkdir -p reports/${{ env.BRANCH_NAME }}
+        cd reports/${{ env.BRANCH_NAME }}
         
         rm -rf -- *
 
@@ -54,7 +66,7 @@ runs:
         git config user.email github-actions@github.com
         git status
         git add .
-        git commit -am $BRANCH_NAME || true
+        git commit -am ${{ env.BRANCH_NAME }} || true
         git push
 
     - name: Comment report details on pull request
@@ -74,8 +86,8 @@ runs:
           const githubActionBotUser = await github.rest.users.getByUsername({ username: 'github-actions[bot]' });
 
           console.log(JSON.stringify(githubActionBotUser));
-          console.log(`${{ BRANCH_NAME }}`);
-          console.log(`${{ SHA_SHORT }}`);
+          console.log(`${{ env.BRANCH_NAME }}`);
+          console.log(`${{ env.SHA_SHORT }}`);
           
           const botComment = comments.find(comment => comment.user.id === githubActionBotUser.data.id && comment.body.includes(`## ${{ inputs.comment-title }}`));
           
@@ -83,10 +95,10 @@ runs:
           let commentBody = "";
           
           for (const key in artifactsObj) {
-            commentBody += `- [${key}](${{ inputs.domain }}/reports/${{ BRANCH_NAME }}/${artifactsObj[key]})\n`
+            commentBody += `- [${key}](${{ inputs.domain }}/reports/${{ env.BRANCH_NAME }}/${artifactsObj[key]})\n`
           }
 
-          const comment = `## ${{ inputs.comment-title }}\n\nCommit: ${{ SHA_SHORT }}\n\n${commentBody}`
+          const comment = `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.SHA_SHORT }}\n\n${commentBody}`
           
           if(botComment) {
             await github.rest.issues.updateComment({
