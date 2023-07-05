@@ -33,13 +33,11 @@ runs:
     - name: Build artifacts to be published
       shell: bash
       run: |
-        mkdir -p ${{ github.workspace }}/artifacts
-
         echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
-          cp -R $report_path ${{ github.workspace }}/artifacts
+          cp -R $report_path ${{ github.workspace }}/artifacts/
         done
 
-        ls -R ${{ github.workspace }}/artifacts
+        ls -R ${{ github.workspace }}/artifacts/
 
     - name: Checkout gh-pages branch
       uses: actions/checkout@v3
@@ -70,7 +68,7 @@ runs:
         echo "ls1"
         ls -R
 
-        cp -R ${{ github.workspace }}/artifacts/ .
+        cp -R ${{ github.workspace }}/artifacts .
 
         echo "ls2"
         ls -R
