@@ -30,16 +30,26 @@ runs:
 
         [ "${{ inputs.domain }}" ] || { echo "gh-pages domain must be provided"; exit 1; }
 
+    - name: Build artifacts to be published
+      shell: bash
+      run: |
+        ls -R
+        mkdir -p ${{ github.workspace }}/artifacts
+
+        echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
+          cp -R $report_path ${{ github.workspace }}/artifacts
+        done
+
     - name: Checkout gh-pages branch
       uses: actions/checkout@v3
       with:
         ref: gh-pages
 
-    - name: Download artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: reports
-        path: artifacts/reports
+    # - name: Download artifacts
+    #   uses: actions/download-artifact@v3
+    #   with:
+    #     name: reports
+    #     path: artifacts/reports
 
     - name: Set the environment variables
       shell: bash
@@ -55,9 +65,11 @@ runs:
         
         rm -rf -- *
 
-        echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
-          cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
-        done
+        cp -R ${{ github.workspace }}/artifacts .
+
+        # echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
+        #   cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
+        # done
         
         rm -rf -- ${{ github.workspace }}/artifacts/
         
