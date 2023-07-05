@@ -1,27 +1,21 @@
-name: Publish
+name: Publish gh-pages
 
-description: 'Publish report to gh-pages'
+description: 'Action to publish reports to gh-pages'
 
 inputs:
+  artifacts:
+    description: 'Artifacts to be published to gh-pages'
+    required: true
+  domain:
+    description: 'GH pages domain name'
+    required: true
   comment-title:
-    description: 'Pull request comment title'
-    required: true
-    type: string
-  comment-body:
-    description: 'Pull request comment body'
-    required: true
-    type: string
-  artifact-name:
-    description: 'Artifact to be published to gh-pages'
-    required: true
-    type: string
-  publish-artifact-paths:
-    description: 'Comma separated list of artifact paths to be published to gh-pages. If not specified, publishes all entire content from artifact directory.'
+    description: 'Comment title'
     required: false
-    type: string
+    default: 'Test reports'
 
 runs:
-  using: "composite"
+  using: 'composite'
   steps:
     - name: Checkout gh-pages branch
       uses: actions/checkout@v3
@@ -31,51 +25,56 @@ runs:
     - name: Download artifacts
       uses: actions/download-artifact@v3
       with:
-        name: ${{ inputs.artifact-name }}
-        path: artifacts
+        name: reports
+        path: artifacts/reports
 
-    - name: Set the branch name
+    - name: Set the environment variables
       shell: bash
       run: |
-        echo "branch_name=${{ github.head_ref || github.ref_name }}" >> "$GITHUB_ENV"
-        echo ${{ github.head_ref || github.ref_name }}
+        echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
+        echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
+        echo "userid_github_bot=41898282" >> $GITHUB_ENV
+
+        echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
+        echo $(git rev-parse --short ${{ github.event.pull_request.head.sha }})
+
+        echo "userid_github_bot=41898282" >> $GITHUB_ENV
 
     - name: Commit reports
       shell: bash
+      env:
+        BRANCH_NAME: ${{ github.head_ref }}
       run: |
-        mkdir -p reports
-        cd reports
-
-        mkdir -p ${{ env.branch_name }}
-        cd ${{ env.branch_name }}
-        
-        rm -rf *
-        
-        if [ -z "${{ inputs.publish-artifact-paths }}" ]
+        if [ -z "${{ inputs.artifacts }}" ]
         then
-          cp -R ${{ github.workspace }}/artifacts/* .
-        else
-          IFS=', ' read -r -a artifact_paths <<< "${{ inputs.publish-artifact-paths }}"
-          for path in "${artifact_paths[@]}"
-          do
-            echo $path
-            cp -R ${{ github.workspace }}/artifacts/$path .
-            ls -R ${{ github.workspace }}/artifacts/$path
-          done
+          echo "Please specify artifacts to be published to gh-pages"
+          exit 1
         fi
+
+        mkdir -p reports/${{ env.BRANCH_NAME }}
+        cd reports/${{ env.BRANCH_NAME }}
         
-        rm -R ${{ github.workspace }}/artifacts/
+        rm -rf -- *
+
+        echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
+          cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
+        done
+        
+        rm -rf -- ${{ github.workspace }}/artifacts/
         
         git config user.name github-actions
         git config user.email github-actions@github.com
         git status
         git add .
-        git commit -am ${{ env.branch_name }} || true
+        git commit -am ${{ env.BRANCH_NAME }} || true
         git push
 
     - name: Comment report details on pull request
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
+      env:
+        BRANCH_NAME: ${{ github.head_ref }}
+        SHA_SHORT: ${{ git rev-parse --short ${{ github.event.pull_request.head.sha }} }}
       with:
         script: |
           const { data: comments } = await github.rest.issues.listComments({
@@ -83,22 +82,36 @@ runs:
             repo: context.repo.repo,
             issue_number: context.payload.number
           });
+          
+          const githubActionBotUser = await github.rest.users.getByUsername({ username: 'github-actions[bot]' });
 
-          const botComment = comments.find(comment => comment.user.id === 41898282 && comment.body.includes(`## ${{ inputs.comment-title }}`));
-          const comment = `## ${{ inputs.comment-title }}\n\n${{ inputs.comment-body }}`
+          console.log(JSON.stringify(githubActionBotUser));
+          console.log(`${{ env.BRANCH_NAME }}`);
+          console.log(`${{ env.SHA_SHORT }}`);
+          
+          const botComment = comments.find(comment => comment.user.id === githubActionBotUser.data.id && comment.body.includes(`## ${{ inputs.comment-title }}`));
+          
+          const artifactsObj = JSON.parse(`${{ inputs.artifacts }}`);
+          let commentBody = "";
+          
+          for (const key in artifactsObj) {
+            commentBody += `- [${key}](${{ inputs.domain }}/reports/${{ env.BRANCH_NAME }}/${artifactsObj[key]})\n`
+          }
+
+          const comment = `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.SHA_SHORT }}\n\n${commentBody}`
           
           if(botComment) {
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: botComment.id,
-              body: `${comment}\n\n:recycle: This comment has been updated with latest results.`,
+              body: `${comment}\n\n:recycle: This comment has been updated with latest results.`
             });
           } else {
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.number,
-              body: comment,
+              body: comment
             });
           }
