@@ -2,6 +2,8 @@ name: Cleanup gh-pages
 
 description: 'Action to cleanup reports in gh-pages branch'
 
+concurrency: publish_gh_pages
+
 runs:
   using: 'composite'
   steps:
