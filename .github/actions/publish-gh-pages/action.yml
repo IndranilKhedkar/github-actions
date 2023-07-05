@@ -2,6 +2,8 @@ name: Publish gh-pages
 
 description: 'Action to publish reports to gh-pages'
 
+concurrency: publish_gh_pages
+
 inputs:
   artifacts:
     description: 'Artifacts to be published to gh-pages'
