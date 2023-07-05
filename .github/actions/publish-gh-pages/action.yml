@@ -20,8 +20,13 @@ runs:
     - name: Validate inputs
       shell: bash
       run: |
-        [ "${{ inputs.artifacts }}" ] && { echo "artifacts must be provided"; exit 1; }
-        [ "${{ inputs.domain }}" ] && { echo "gh-pages domain must be provided"; exit 1; }
+        if [ -z "${{ inputs.artifacts }}" ]
+        then
+          echo "artifacts must be provided";
+          exit 1;
+        fi
+
+        [ "${{ inputs.domain }}" ] || { echo "gh-pages domain must be provided"; exit 1; }
 
     - name: Checkout gh-pages branch
       uses: actions/checkout@v3
@@ -43,12 +48,6 @@ runs:
     - name: Commit reports
       shell: bash
       run: |
-        if [ -z "${{ inputs.artifacts }}" ]
-        then
-          echo "Please specify artifacts to be published to gh-pages"
-          exit 1
-        fi
-
         mkdir -p reports/${{ env.branch_name }}
         cd reports/${{ env.branch_name }}
         
