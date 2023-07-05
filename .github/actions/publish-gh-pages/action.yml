@@ -33,17 +33,9 @@ runs:
       run: |
         echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
         echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
-        echo "userid_github_bot=41898282" >> $GITHUB_ENV
-
-        echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
-        echo $(git rev-parse --short ${{ github.event.pull_request.head.sha }})
-
-        echo "userid_github_bot=41898282" >> $GITHUB_ENV
 
     - name: Commit reports
       shell: bash
-      env:
-        BRANCH_NAME: ${{ github.head_ref }}
       run: |
         if [ -z "${{ inputs.artifacts }}" ]
         then
@@ -51,8 +43,8 @@ runs:
           exit 1
         fi
 
-        mkdir -p reports/${{ env.BRANCH_NAME }}
-        cd reports/${{ env.BRANCH_NAME }}
+        mkdir -p reports/${{ env.branch_name }}
+        cd reports/${{ env.branch_name }}
         
         rm -rf -- *
 
@@ -66,15 +58,12 @@ runs:
         git config user.email github-actions@github.com
         git status
         git add .
-        git commit -am ${{ env.BRANCH_NAME }} || true
+        git commit -am ${{ env.branch_name }} || true
         git push
 
     - name: Comment report details on pull request
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
-      env:
-        BRANCH_NAME: ${{ github.head_ref }}
-        SHA_SHORT: ${{ git rev-parse --short ${{ github.event.pull_request.head.sha }} }}
       with:
         script: |
           const { data: comments } = await github.rest.issues.listComments({
@@ -84,10 +73,6 @@ runs:
           });
           
           const githubActionBotUser = await github.rest.users.getByUsername({ username: 'github-actions[bot]' });
-
-          console.log(JSON.stringify(githubActionBotUser));
-          console.log(`${{ env.BRANCH_NAME }}`);
-          console.log(`${{ env.SHA_SHORT }}`);
           
           const botComment = comments.find(comment => comment.user.id === githubActionBotUser.data.id && comment.body.includes(`## ${{ inputs.comment-title }}`));
           
@@ -95,10 +80,10 @@ runs:
           let commentBody = "";
           
           for (const key in artifactsObj) {
-            commentBody += `- [${key}](${{ inputs.domain }}/reports/${{ env.BRANCH_NAME }}/${artifactsObj[key]})\n`
+            commentBody += `- [${key}](${{ inputs.domain }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`
           }
 
-          const comment = `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.SHA_SHORT }}\n\n${commentBody}`
+          const comment = `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`
           
           if(botComment) {
             await github.rest.issues.updateComment({
