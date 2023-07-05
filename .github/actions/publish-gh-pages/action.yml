@@ -33,8 +33,7 @@ runs:
     - name: Build artifacts to be published
       shell: bash
       run: |
-        ls -R
-        mkdir -p ${{ github.workspace }}/artifacts
+        mkdir -p ${{ github.workspace }}/../artifacts
 
         echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
           cp -R $report_path ${{ github.workspace }}/artifacts
@@ -67,7 +66,7 @@ runs:
         
         rm -rf -- *
 
-        cp -R ${{ github.workspace }}/artifacts .
+        cp -R ${{ github.workspace }}/../artifacts .
 
         # echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
         #   cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
