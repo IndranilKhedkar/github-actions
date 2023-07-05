@@ -40,6 +40,8 @@ runs:
           cp -R $report_path ${{ github.workspace }}/artifacts
         done
 
+        ls -R ${{ github.workspace }}/artifacts
+
     - name: Checkout gh-pages branch
       uses: actions/checkout@v3
       with:
