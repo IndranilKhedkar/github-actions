@@ -67,7 +67,9 @@ runs:
         
         rm -rf -- *
 
-        cp -R ${{ github.workspace }}/artifacts .
+        ls -R ${{ github.workspace }}/artifacts/
+
+        cp -R ${{ github.workspace }}/artifacts/ .
 
         # echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
         #   cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
