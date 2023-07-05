@@ -36,7 +36,7 @@ runs:
         echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
           echo "$report_path" 
           echo "${{ github.workspace }}/artifacts"
-          cp -r "$report_path" ${{ github.workspace }}/artifacts
+          cp -r "$report_path/" ${{ github.workspace }}/artifacts
         done
 
         ls -R ${{ github.workspace }}/artifacts
@@ -70,7 +70,7 @@ runs:
         echo "ls1"
         ls -R
 
-        cp -R ${{ github.workspace }}/artifacts .
+        cp -R ${{ github.workspace }}/artifacts/ .
 
         echo "ls2"
         ls -R
