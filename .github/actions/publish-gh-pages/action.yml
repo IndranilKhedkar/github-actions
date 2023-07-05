@@ -34,10 +34,10 @@ runs:
       shell: bash
       run: |
         echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
-          cp -R $report_path ${{ github.workspace }}/artifacts/
+          cp -R $report_path ${{ github.workspace }}/artifacts
         done
 
-        ls -R ${{ github.workspace }}/artifacts/
+        ls -R ${{ github.workspace }}/artifacts
 
     - name: Checkout gh-pages branch
       uses: actions/checkout@v3
@@ -73,7 +73,7 @@ runs:
         echo "ls2"
         ls -R
         
-        rm -rf -- ${{ github.workspace }}/artifacts/
+        rm -rf -- ${{ github.workspace }}/artifacts
         
         git config user.name github-actions
         git config user.email github-actions@github.com
