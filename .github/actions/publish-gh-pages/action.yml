@@ -33,7 +33,7 @@ runs:
     - name: Build artifacts to be published
       shell: bash
       run: |
-        mkdir -p ~/artifacts
+        mkdir -p ${{ github.workspace }}/artifacts
 
         echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
           cp -R $report_path ${{ github.workspace }}/artifacts
@@ -45,6 +45,7 @@ runs:
       uses: actions/checkout@v3
       with:
         ref: gh-pages
+        clean: false
 
     # - name: Download artifacts
     #   uses: actions/download-artifact@v3
@@ -66,7 +67,7 @@ runs:
         
         rm -rf -- *
 
-        cp -R ~/artifacts .
+        cp -R ${{ github.workspace }}/artifacts .
 
         # echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
         #   cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
