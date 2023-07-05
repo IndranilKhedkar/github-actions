@@ -20,8 +20,8 @@ runs:
     - name: Validate inputs
       shell: bash
       run: |
-        [[ "${{ inputs.artifacts }}" ]] || { echo "artifacts must be provided" ; exit 1; }
-        [[ "${{ inputs.domain }}" ]] || { echo "gh-pages domain must be provided" ; exit 1; }
+        [[ ! -z "${{ inputs.artifacts }}" ]] && { echo "artifacts must be provided" ; exit 1; }
+        [[ ! -z "${{ inputs.domain }}" ]] || { echo "gh-pages domain must be provided" ; exit 1; }
 
     - name: Checkout gh-pages branch
       uses: actions/checkout@v3
