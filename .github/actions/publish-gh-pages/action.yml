@@ -46,6 +46,9 @@ runs:
         mkdir -p reports/${{ env.branch_name }}
         cd reports/${{ env.branch_name }}
         
+        echo "${{ env.branch_name }}"
+        echo "${{ env.sha_short }}"
+
         rm -rf -- *
 
         echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
