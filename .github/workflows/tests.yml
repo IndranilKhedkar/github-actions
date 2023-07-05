@@ -67,6 +67,6 @@ jobs:
       - name: Publish unit test reports
         uses: IndranilKhedkar/github-actions/.github/actions/publish-gh-pages@test-github-actions
         with:
-          # artifacts: '{"Coverage report": "unit-tests-coverage", "Test results": "unit-tests"}'
+          artifacts: '{"Coverage report": "unit-tests-coverage", "Test results": "unit-tests"}'
           comment-title: 'Unit test reports'
           # domain: "https://indranilkhedkar.github.io"
