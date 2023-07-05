@@ -36,8 +36,6 @@ runs:
 
     - name: Commit reports
       shell: bash
-      env:
-        BRANCH_NAME: ${{ github.head_ref }}
       run: |
         if [ -z "${{ inputs.artifacts }}" ]
         then
@@ -69,9 +67,6 @@ runs:
     - name: Comment report details on pull request
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
-      env:
-        BRANCH_NAME: ${{ github.head_ref }}
-        SHA_SHORT: ${{ git rev-parse --short ${{ github.event.pull_request.head.sha }} }}
       with:
         script: |
           const { data: comments } = await github.rest.issues.listComments({
