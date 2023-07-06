@@ -2,8 +2,6 @@ name: Cleanup gh-pages
 
 description: 'Action to cleanup reports in gh-pages branch'
 
-concurrency: cleanup_gh_pages
-
 runs:
   using: 'composite'
   steps:
@@ -18,7 +16,6 @@ runs:
         BRANCH_NAME: ${{ github.head_ref }}
       run: |
         cd reports
-
         if [ -d "$BRANCH_NAME" ]; then
           rm -rf -- $BRANCH_NAME
           git config user.name github-actions
