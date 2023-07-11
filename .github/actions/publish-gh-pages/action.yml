@@ -70,7 +70,7 @@ runs:
         
         rm -rf -- *
 
-        cp -r ~/gh_pages_artifacts .
+        cp -r ~/gh_pages_artifacts/* .
 
         # echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
         #   cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
