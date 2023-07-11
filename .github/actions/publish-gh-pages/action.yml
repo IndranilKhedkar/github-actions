@@ -37,16 +37,19 @@ runs:
         echo "github.sha ${{ github.sha }}"
         echo "github.workspace ${{ github.workspace }}"
 
-    - name: Build publish artifacts
+    - name: Build gh-pages publish artifacts
       shell: bash
       run: |
-        mkdir -p ~/artifacts/reports/
-
+        mkdir -p ~/gh_pages_artifacts/
         echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
-          cp -R $report_path ~/artifacts/reports/
+          cp -R $report_path ~/gh_pages_artifacts/
         done
 
-        ls -R ~/artifacts/reports/
+    - name: Set the environment variables
+      shell: bash
+      run: |
+        echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
+        echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
 
     - name: Checkout gh-pages branch
       uses: actions/checkout@v3
@@ -59,12 +62,6 @@ runs:
     #     name: reports
     #     path: artifacts/reports
 
-    - name: Set the environment variables
-      shell: bash
-      run: |
-        echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
-        echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
-
     - name: Commit reports
       shell: bash
       run: |
@@ -73,11 +70,11 @@ runs:
         
         rm -rf -- *
 
-        echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
-          cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
-        done
-        
-        rm -rf -- ${{ github.workspace }}/artifacts/
+        cp -R ~/gh_pages_artifacts/ .
+
+        # echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
+        #   cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
+        # done
         
         git config user.name github-actions
         git config user.email github-actions@github.com
@@ -85,6 +82,12 @@ runs:
         git add .
         git commit -am ${{ env.branch_name }} || true
         git push --force
+
+    - name: Cleanup gh-pages artifacts
+      shell: bash
+      run: |
+        rm -rf -- ~/gh_pages_artifacts
+        ls -R ~/gh_pages_artifacts
 
     - name: Comment report details on pull request
       uses: actions/github-script@v6
