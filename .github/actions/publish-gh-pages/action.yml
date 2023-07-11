@@ -6,9 +6,6 @@ inputs:
   artifacts:
     description: 'Artifacts to be published to gh-pages'
     required: true
-  domain:
-    description: 'GH pages domain name'
-    required: true
   comment-title:
     description: 'Comment title'
     required: false
@@ -26,7 +23,13 @@ runs:
           exit 1;
         fi
 
-        [ "${{ inputs.domain }}" ] || { echo "gh-pages domain must be provided"; exit 1; }
+        echo "${{ GITHUB_REF_NAME }}"
+        echo "${{ GITHUB_REPOSITORY }}"
+        echo "${{ GITHUB_REPOSITORY_OWNER }}"
+        echo "${{ GITHUB_REPOSITORY_OWNER_ID }}"
+        echo "${{ GITHUB_SERVER_URL }}"
+        echo "${{ GITHUB_SHA }}"
+        echo "${{ GITHUB_WORKSPACE }}"
 
     - name: Checkout gh-pages branch
       uses: actions/checkout@v3
@@ -64,44 +67,44 @@ runs:
         git status
         git add .
         git commit -am ${{ env.branch_name }} || true
-        git push
+        git push --force
 
     - name: Comment report details on pull request
       uses: actions/github-script@v6
       if: github.event_name == 'pull_request'
       with:
         script: |
+          function generateComment() {
+            let commentBody = "";
+            const artifactsObj = JSON.parse(`${{ inputs.artifacts }}`);
+            
+            for (const key in artifactsObj) {
+              commentBody += `- [${key}](${{ inputs.domain }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`;
+            }
+
+            return `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`;
+          }
+          
+          const githubActionBotUser = await github.rest.users.getByUsername({ username: 'github-actions[bot]' });
           const { data: comments } = await github.rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
             issue_number: context.payload.number
           });
-          
-          const githubActionBotUser = await github.rest.users.getByUsername({ username: 'github-actions[bot]' });
-          
           const botComment = comments.find(comment => comment.user.id === githubActionBotUser.data.id && comment.body.includes(`## ${{ inputs.comment-title }}`));
-          
-          const artifactsObj = JSON.parse(`${{ inputs.artifacts }}`);
-          let commentBody = "";
-          
-          for (const key in artifactsObj) {
-            commentBody += `- [${key}](${{ inputs.domain }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`
-          }
-
-          const comment = `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`
           
           if(botComment) {
             await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               comment_id: botComment.id,
-              body: `${comment}\n\n:recycle: This comment has been updated with latest results.`
+              body: `${generateComment()}\n\n:recycle: This comment has been updated with latest results.`
             });
           } else {
             await github.rest.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.number,
-              body: comment
+              body: generateComment()
             });
           }
