@@ -37,16 +37,25 @@ runs:
         echo "github.sha ${{ github.sha }}"
         echo "github.workspace ${{ github.workspace }}"
 
+    - name: Build publish artifacts
+      shell: bash
+      run: |
+        echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
+          cp -R $report_path ~/artifacts/reports/
+        done
+
+        ls -R ~/artifacts/reports/
+
     - name: Checkout gh-pages branch
       uses: actions/checkout@v3
       with:
         ref: gh-pages
 
-    - name: Download artifacts
-      uses: actions/download-artifact@v3
-      with:
-        name: reports
-        path: artifacts/reports
+    # - name: Download artifacts
+    #   uses: actions/download-artifact@v3
+    #   with:
+    #     name: reports
+    #     path: artifacts/reports
 
     - name: Set the environment variables
       shell: bash
@@ -85,18 +94,20 @@ runs:
             const artifactsObj = JSON.parse(`${{ inputs.artifacts }}`);
             
             for (const key in artifactsObj) {
-              commentBody += `- [${key}](${{ inputs.domain }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`;
+              commentBody += `- [${key}](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`;
             }
 
             return `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`;
           }
-          
-          const githubActionBotUser = await github.rest.users.getByUsername({ username: 'github-actions[bot]' });
+
           const { data: comments } = await github.rest.issues.listComments({
             owner: context.repo.owner,
             repo: context.repo.repo,
             issue_number: context.payload.number
           });
+
+          const githubActionBotUser = await github.rest.users.getByUsername({ username: 'github-actions[bot]' });
+          
           const botComment = comments.find(comment => comment.user.id === githubActionBotUser.data.id && comment.body.includes(`## ${{ inputs.comment-title }}`));
           
           if(botComment) {
