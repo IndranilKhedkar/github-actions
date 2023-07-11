@@ -23,13 +23,19 @@ runs:
           exit 1;
         fi
 
-        echo "${{ env.GITHUB_REF_NAME }}"
-        echo "${{ env.GITHUB_REPOSITORY }}"
-        echo "${{ env.GITHUB_REPOSITORY_OWNER }}"
-        echo "${{ env.GITHUB_REPOSITORY_OWNER_ID }}"
-        echo "${{ env.GITHUB_SERVER_URL }}"
-        echo "${{ env.GITHUB_SHA }}"
-        echo "${{ env.GITHUB_WORKSPACE }}"
+        echo "github.ref_name ${{ github.ref_name }}"
+        echo "github.repository ${{ github.repository }}"
+        echo "github.ref_type ${{ github.ref_type }}"
+        echo "github.ref ${{ github.ref }}"
+        echo "github.head_ref ${{ github.head_ref }}"
+        echo "github.base_ref ${{ github.base_ref }}"
+        echo "github.event_name ${{ github.event_name }}"
+        echo "github.action_repository ${{ github.action_repository }}"
+        echo "github.repository_owner ${{ github.repository_owner }}"
+        echo "github.repository_owner_id ${{ github.repository_owner_id }}"
+        echo "github.server_url ${{ github.server_url }}"
+        echo "github.sha ${{ github.sha }}"
+        echo "github.workspace ${{ github.workspace }}"
 
     - name: Checkout gh-pages branch
       uses: actions/checkout@v3
