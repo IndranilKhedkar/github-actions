@@ -40,8 +40,8 @@ runs:
     - name: Build publish artifacts
       shell: bash
       run: |
-        ls -R .
-        
+        mkdir -p ~/artifacts/reports/
+
         echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
           cp -R $report_path ~/artifacts/reports/
         done
