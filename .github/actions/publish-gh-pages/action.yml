@@ -70,7 +70,7 @@ runs:
         
         rm -rf -- *
 
-        cp -R ~/gh_pages_artifacts/ .
+        cp -r ~/gh_pages_artifacts/ .
 
         # echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
         #   cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
@@ -83,11 +83,10 @@ runs:
         git commit -am ${{ env.branch_name }} || true
         git push --force
 
-    - name: Cleanup gh-pages artifacts
+    - name: Cleanup built gh-pages artifacts
       shell: bash
       run: |
         rm -rf -- ~/gh_pages_artifacts
-        ls -R ~/gh_pages_artifacts
 
     - name: Comment report details on pull request
       uses: actions/github-script@v6
