@@ -13,6 +13,10 @@ on:
         default: 'Test reports'
         type: string
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   publish-gh-pages:
     name: Publish artifacts to gh-pages
@@ -39,6 +43,7 @@ jobs:
       - name: Commit reports to gh-pages branch
         shell: bash
         run: |
+          echo "github.ref = ${{ github.ref }}"
           mkdir -p reports/${{ env.branch_name }}
           cd reports/${{ env.branch_name }}
           
@@ -55,6 +60,8 @@ jobs:
           git add .
           git commit -am ${{ env.branch_name }} || true
           git push
+
+          sleep 5m
 
       - name: Cleanup downloaded artifacts
         shell: bash

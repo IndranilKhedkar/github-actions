@@ -3,6 +3,10 @@ name: Reusable workflow - Cleanup gh-pages
 on:
   workflow_call:
 
+concurrency:
+  group: ${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   cleanup-gh-pages:
     name: Cleanup gh-pages
@@ -20,6 +24,8 @@ jobs:
           BRANCH_NAME: ${{ github.head_ref }}
         run: |
           cd reports
+
+          echo "${{ github.ref }}"
 
           if [ -d "$BRANCH_NAME" ]; then
             rm -rf -- $BRANCH_NAME
