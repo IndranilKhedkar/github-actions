@@ -112,7 +112,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 comment_id: botComment.id,
-                body: `${generateComment()}\n\n:recycle: This comment has been updated with latest results.`
+                body: `${generateComment()}\n:recycle: This comment has been updated with latest results.`
               });
             } else {
               await github.rest.issues.createComment({

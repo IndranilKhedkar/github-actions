@@ -69,5 +69,4 @@ jobs:
     needs: unit
     uses: IndranilKhedkar/github-actions/.github/workflows/publish-gh-pages.yml@test-github-workflow
     with:
-      artifacts: '{\"Coverage report\": \"unit-tests-coverage\", \"Test results\": \"unit-tests\"}'
       comment-title: 'Unit test reports'
