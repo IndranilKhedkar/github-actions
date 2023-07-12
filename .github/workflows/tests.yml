@@ -69,4 +69,5 @@ jobs:
     needs: unit
     uses: IndranilKhedkar/github-actions/.github/workflows/publish-gh-pages.yml@test-github-workflow
     with:
+      artifacts: ''
       comment-title: 'Unit test reports'
