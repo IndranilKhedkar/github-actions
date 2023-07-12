@@ -2,6 +2,10 @@ name: Publish gh-pages
 
 description: 'Action to publish reports to gh-pages'
 
+concurrency:
+  group: ${{ github.repository }}-gh-pages
+  cancel-in-progress: false
+
 inputs:
   artifacts:
     description: 'Artifacts to be published to gh-pages'
@@ -40,14 +44,9 @@ runs:
     - name: Build gh-pages publish artifacts
       shell: bash
       run: |
-        # mkdir -p ~/gh_pages_artifacts
-        # echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
-        #   cp -R $report_path ~/gh_pages_artifacts
-        # done
-
-        mkdir -p ${{ github.workspace }}/gh_pages_artifacts
+        mkdir -p ~/gh_pages_artifacts
         echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
-          cp -R $report_path ${{ github.workspace }}/gh_pages_artifacts
+          cp -R $report_path ~/gh_pages_artifacts
         done
 
     - name: Set the environment variables
@@ -75,8 +74,7 @@ runs:
         
         rm -rf -- *
 
-        # cp -r ~/gh_pages_artifacts/* .
-        cp -r ${{ github.workspace }}/gh_pages_artifacts/* .
+        cp -r ~/gh_pages_artifacts/* .
 
         # echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
         #   cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
@@ -92,8 +90,8 @@ runs:
     - name: Cleanup built gh-pages artifacts
       shell: bash
       run: |
-        # rm -rf -- ~/gh_pages_artifacts
-        rm -rf -- ${{ github.workspace }}/gh_pages_artifacts
+        rm -rf -- ~/gh_pages_artifacts
+        sleep 5m
 
     - name: Comment report details on pull request
       uses: actions/github-script@v6

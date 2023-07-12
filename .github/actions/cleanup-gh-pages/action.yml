@@ -2,6 +2,10 @@ name: Cleanup gh-pages
 
 description: 'Action to cleanup reports in gh-pages branch'
 
+concurrency:
+  group: ${{ github.repository }}-gh-pages
+  cancel-in-progress: false
+
 runs:
   using: 'composite'
   steps:
