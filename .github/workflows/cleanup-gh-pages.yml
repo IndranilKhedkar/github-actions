@@ -1,0 +1,34 @@
+name: Reusable workflow - Cleanup gh-pages
+
+on:
+  workflow_call:
+
+jobs:
+  cleanup-gh-pages:
+    name: Cleanup gh-pages
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+
+      - name: Cleanup reports folder
+        shell: bash
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          cd reports
+
+          if [ -d "$BRANCH_NAME" ]; then
+            rm -rf -- $BRANCH_NAME
+            git config user.name github-actions
+            git config user.email github-actions@github.com
+            git pull
+            git status
+            git diff --quiet && git diff --staged --quiet || git commit -am "Deleting $BRANCH_NAME directory."
+            git push
+          else
+            echo "$BRANCH_NAME directory does not exists."
+          fi
