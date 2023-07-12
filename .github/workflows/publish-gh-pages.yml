@@ -22,7 +22,6 @@ jobs:
       - name: Validate inputs
         shell: bash
         run: |
-          ls -R ${{ github.workspace }}
           if [ -z "${{ inputs.artifacts }}" ]
           then
             echo "artifacts must be provided";
@@ -43,31 +42,23 @@ jobs:
           echo "github.sha ${{ github.sha }}"
           echo "github.workspace ${{ github.workspace }}"
           echo "github.workspace ${{ github.repositoryUrl }}"
+    
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
 
-      - name: Build gh-pages publish artifacts
-        shell: bash
-        run: |
-          mkdir -p ~/gh_pages_artifacts
-          echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
-            cp -R $report_path ~/gh_pages_artifacts
-          done
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: reports
+          path: artifacts/reports
 
       - name: Set the environment variables
         shell: bash
         run: |
           echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
           echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
-
-      - name: Checkout gh-pages branch
-        uses: actions/checkout@v3
-        with:
-          ref: gh-pages
-
-      # - name: Download artifacts
-      #   uses: actions/download-artifact@v3
-      #   with:
-      #     name: reports
-      #     path: artifacts/reports
 
       - name: Commit reports
         shell: bash
@@ -77,11 +68,11 @@ jobs:
           
           rm -rf -- *
 
-          cp -r ~/gh_pages_artifacts/* .
-
-          # echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
-          #   cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
-          # done
+          echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
+            cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
+          done
+          
+          rm -rf -- ${{ github.workspace }}/artifacts/
           
           git config user.name github-actions
           git config user.email github-actions@github.com
@@ -89,53 +80,51 @@ jobs:
           git status
           git add .
           git commit -am ${{ env.branch_name }} || true
-          git push --force
+          git push
 
       - name: Cleanup built gh-pages artifacts
         shell: bash
         run: |
           rm -rf -- ~/gh_pages_artifacts
-          sleep 5m
 
-      - name: Comment report details on pull request
-        uses: actions/github-script@v6
-        if: github.event_name == 'pull_request'
-        with:
-          script: |
-            function generateComment() {
-              let commentBody = "";
-              const artifactsObj = JSON.parse(`${{ inputs.artifacts }}`);
-              
-              for (const key in artifactsObj) {
-                const reportName = artifactsObj[key].split('/').pop();
-                commentBody += `- [${key}](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ env.branch_name }}/${reportName})\n`;
-              }
-
-              return `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`;
+    - name: Comment report details on pull request
+      uses: actions/github-script@v6
+      if: github.event_name == 'pull_request'
+      with:
+        script: |
+          function generateComment() {
+            let commentBody = "";
+            const artifactsObj = JSON.parse(`${{ inputs.artifacts }}`);
+            
+            for (const key in artifactsObj) {
+              commentBody += `- [${key}](${{ inputs.domain }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`;
             }
 
-            const { data: comments } = await github.rest.issues.listComments({
+            return `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`;
+          }
+
+          const { data: comments } = await github.rest.issues.listComments({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            issue_number: context.payload.number
+          });
+          
+          const githubActionBotUser = await github.rest.users.getByUsername({ username: 'github-actions[bot]' });
+          
+          const botComment = comments.find(comment => comment.user.id === githubActionBotUser.data.id && comment.body.includes(`## ${{ inputs.comment-title }}`));
+          
+          if(botComment) {
+            await github.rest.issues.updateComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: context.payload.number
+              comment_id: botComment.id,
+              body: `${comment}\n\n:recycle: This comment has been updated with latest results.`
             });
-
-            const githubActionBotUser = await github.rest.users.getByUsername({ username: 'github-actions[bot]' });
-            
-            const botComment = comments.find(comment => comment.user.id === githubActionBotUser.data.id && comment.body.includes(`## ${{ inputs.comment-title }}`));
-            
-            if(botComment) {
-              await github.rest.issues.updateComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                comment_id: botComment.id,
-                body: `${generateComment()}\n\n:recycle: This comment has been updated with latest results.`
-              });
-            } else {
-              await github.rest.issues.createComment({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                issue_number: context.payload.number,
-                body: generateComment()
-              });
-            }
+          } else {
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.number,
+              body: comment
+            });
+          }
