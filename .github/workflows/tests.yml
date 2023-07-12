@@ -65,7 +65,7 @@ jobs:
           echo "GitHub - ${{ github }}"
 
       - name: Publish unit test reports
-        uses: IndranilKhedkar/github-actions/.github/actions/publish-gh-pages@test-github-actions
+        uses: IndranilKhedkar/github-actions/.github/workflows/publish-gh-pages@test-github-workflow
         with:
           artifacts: '{"Coverage report": "client/reports/unit-tests-coverage", "Test results": "client/reports/unit-tests"}'
           comment-title: 'Unit test reports'
