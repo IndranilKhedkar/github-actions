@@ -22,11 +22,7 @@ jobs:
       - name: Validate inputs
         shell: bash
         run: |
-          if [ -z ${{ inputs.artifacts }} ]
-          then
-            echo "artifacts must be provided";
-            exit 1;
-          fi
+          [ "${{ inputs.artifacts }}" ] || { echo "artifacts must be provided"; exit 1; }
 
           echo "github.ref_name ${{ github.ref_name }}"
           echo "github.repository ${{ github.repository }}"
@@ -68,7 +64,7 @@ jobs:
           
           rm -rf -- *
 
-          echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
+          echo '${{ inputs.artifacts }}' | sed 's/\\//g' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
             cp -R ${{ github.workspace }}/artifacts/$path .
           done
           
