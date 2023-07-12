@@ -1,7 +1,5 @@
 export const getCountries = () => [
   'Aland Islands',
-  'Albania',
-  'Algeria',
   'American Samoa',
   'Andorra',
   'Angola',
