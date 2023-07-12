@@ -7,11 +7,8 @@ on:
 
 jobs:
   cleanup_gh_pages:
+    name: Cleanup gh-pages
     runs-on: ubuntu-latest
-
     permissions:
       contents: write
-
-    steps:
-      - name: Cleanup reports folder
-        uses: IndranilKhedkar/github-actions/.github/actions/cleanup-gh-pages@test-github-actions
+    uses: IndranilKhedkar/github-actions/.github/actions/cleanup-gh-pages.yml@test-github-workflow

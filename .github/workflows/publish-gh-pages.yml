@@ -15,30 +15,10 @@ on:
 
 jobs:
   publish-gh-pages:
-    name: Publish gh-pages
+    name: Publish artifacts to gh-pages
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Validate inputs
-        shell: bash
-        run: |
-          [[ "${{ inputs.artifacts }}" ]] || { echo "artifacts must be provided"; exit 1; }
-
-          echo "github.ref_name ${{ github.ref_name }}"
-          echo "github.repository ${{ github.repository }}"
-          echo "github.ref_type ${{ github.ref_type }}"
-          echo "github.ref ${{ github.ref }}"
-          echo "github.head_ref ${{ github.head_ref }}"
-          echo "github.base_ref ${{ github.base_ref }}"
-          echo "github.event_name ${{ github.event_name }}"
-          echo "github.action_repository ${{ github.action_repository }}"
-          echo "github.repository_owner ${{ github.repository_owner }}"
-          echo "github.repository_owner_id ${{ github.repository_owner_id }}"
-          echo "github.server_url ${{ github.server_url }}"
-          echo "github.sha ${{ github.sha }}"
-          echo "github.workspace ${{ github.workspace }}"
-          echo "github.workspace ${{ github.repositoryUrl }}"
-
       - name: Checkout gh-pages branch
         uses: actions/checkout@v3
         with:
@@ -56,7 +36,7 @@ jobs:
           name: reports
           path: ${{ github.workspace }}/artifacts
 
-      - name: Commit reports
+      - name: Commit reports to gh-pages branch
         shell: bash
         run: |
           mkdir -p reports/${{ env.branch_name }}

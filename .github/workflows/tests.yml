@@ -61,8 +61,8 @@ jobs:
           echo "github.sha ${{ github.sha }}"
           echo "GitHub - ${{ github }}"
 
-  publish-reports:
-    name: Publish reports to gh-pages
+  publish-test-reports:
+    name: Publish test reports to gh-pages
     needs: unit
     permissions:
       contents: write
