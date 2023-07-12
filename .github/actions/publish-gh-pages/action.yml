@@ -3,7 +3,7 @@ name: Publish gh-pages
 description: 'Action to publish reports to gh-pages'
 
 concurrency:
-  group: '${{ github.repository }}-gh-pages'
+  group: gh-pages
   cancel-in-progress: false
 
 inputs:

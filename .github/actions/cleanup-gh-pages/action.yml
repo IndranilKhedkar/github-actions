@@ -3,7 +3,7 @@ name: Cleanup gh-pages
 description: 'Action to cleanup reports in gh-pages branch'
 
 concurrency:
-  group: '${{ github.repository }}-gh-pages'
+  group: gh-pages
   cancel-in-progress: false
 
 runs:
