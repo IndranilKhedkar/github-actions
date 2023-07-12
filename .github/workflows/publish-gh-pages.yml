@@ -22,6 +22,7 @@ jobs:
       - name: Validate inputs
         shell: bash
         run: |
+          ls -R ${{ github.workspace }}
           if [ -z "${{ inputs.artifacts }}" ]
           then
             echo "artifacts must be provided";
