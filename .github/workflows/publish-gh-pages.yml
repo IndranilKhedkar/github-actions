@@ -43,6 +43,12 @@ jobs:
           echo "github.workspace ${{ github.workspace }}"
           echo "github.workspace ${{ github.repositoryUrl }}"
     
+      - name: Set the environment variables
+        shell: bash
+        run: |
+          echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
+          echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
+
       - name: Checkout gh-pages branch
         uses: actions/checkout@v3
         with:
@@ -52,13 +58,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: reports
-          path: artifacts/reports
-
-      - name: Set the environment variables
-        shell: bash
-        run: |
-          echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
-          echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
+          path: ${{ github.workspace }}/artifacts
 
       - name: Commit reports
         shell: bash
@@ -68,11 +68,9 @@ jobs:
           
           rm -rf -- *
 
-          echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read report_path; do
-            cp -R ${{ github.workspace }}/artifacts/reports/$report_path .
+          echo '${{ inputs.artifacts }}' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
+            cp -R ${{ github.workspace }}/artifacts/$path .
           done
-          
-          rm -rf -- ${{ github.workspace }}/artifacts/
           
           git config user.name github-actions
           git config user.email github-actions@github.com
@@ -82,10 +80,10 @@ jobs:
           git commit -am ${{ env.branch_name }} || true
           git push
 
-      - name: Cleanup built gh-pages artifacts
+      - name: Cleanup downloaded artifacts
         shell: bash
         run: |
-          rm -rf -- ~/gh_pages_artifacts
+          rm -rf -- ${{ github.workspace }}/artifacts
 
       - name: Comment report details on pull request
         uses: actions/github-script@v6
