@@ -40,6 +40,7 @@ runs:
         echo "github.server_url ${{ github.server_url }}"
         echo "github.sha ${{ github.sha }}"
         echo "github.workspace ${{ github.workspace }}"
+        echo "github.workspace ${{ github.repositoryUrl }}"
 
     - name: Build gh-pages publish artifacts
       shell: bash
