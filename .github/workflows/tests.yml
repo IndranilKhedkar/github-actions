@@ -6,19 +6,16 @@ on:
     branches:
       - 'main'
 
-permissions:
-  contents: write
-  issues: read
-  checks: write
-  statuses: write
-  pull-requests: write
-
 jobs:
   unit:
     name: Unit Tests
     timeout-minutes: 10
+    permissions:
+      contents: read
+      issues: read
+      checks: write
+      pull-requests: write
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -67,7 +64,11 @@ jobs:
   publish-reports:
     name: Publish reports to gh-pages
     needs: unit
+    permissions:
+      contents: write
+      issues: read
+      pull-requests: write
     uses: IndranilKhedkar/github-actions/.github/workflows/publish-gh-pages.yml@test-github-workflow
     with:
-      artifacts: ''
+      artifacts: "{\"Coverage report\": \"unit-tests-coverage\", \"Test results\": \"unit-tests\"}"
       comment-title: 'Unit test reports'
