@@ -5,8 +5,6 @@ export const getCountries = () => [
   'American Samoa',
   'Andorra',
   'Angola',
-  'Anguilla',
-  'Antarctica',
   'Antigua and Barbuda',
   'Argentina',
   'Armenia',
