@@ -66,7 +66,6 @@ jobs:
 
   publish-reports:
     name: Publish reports to gh-pages
-    timeout-minutes: 10
     uses: IndranilKhedkar/github-actions/.github/workflows/publish-gh-pages.yml@test-github-workflow
     with:
       artifacts: '{"Coverage report": "client/reports/unit-tests-coverage", "Test results": "client/reports/unit-tests"}'

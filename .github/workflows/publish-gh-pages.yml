@@ -6,10 +6,12 @@ on:
       artifacts:
         description: 'Artifacts to be published to gh-pages'
         required: true
+        type: string
       comment-title:
         description: 'Comment title'
         required: false
         default: 'Test reports'
+        type: string
 
 jobs:
   publish-gh-pages:
