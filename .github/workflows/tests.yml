@@ -64,8 +64,13 @@ jobs:
           echo "github.sha ${{ github.sha }}"
           echo "GitHub - ${{ github }}"
 
+  publish-reports:
+    name: Publish reports to gh-pages
+    timeout-minutes: 10
+    steps:
       - name: Publish unit test reports
         uses: IndranilKhedkar/github-actions/.github/workflows/publish-gh-pages@test-github-workflow
         with:
           artifacts: '{"Coverage report": "client/reports/unit-tests-coverage", "Test results": "client/reports/unit-tests"}'
           comment-title: 'Unit test reports'
+
