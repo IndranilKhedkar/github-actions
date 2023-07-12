@@ -8,7 +8,6 @@ on:
 jobs:
   cleanup_gh_pages:
     name: Cleanup gh-pages
-    runs-on: ubuntu-latest
     permissions:
       contents: write
     uses: IndranilKhedkar/github-actions/.github/workflows/cleanup-gh-pages.yml@test-github-workflow
