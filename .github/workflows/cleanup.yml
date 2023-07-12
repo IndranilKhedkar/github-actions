@@ -11,4 +11,4 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-    uses: IndranilKhedkar/github-actions/.github/actions/cleanup-gh-pages.yml@test-github-workflow
+    uses: IndranilKhedkar/github-actions/.github/workflows/cleanup-gh-pages.yml@test-github-workflow
