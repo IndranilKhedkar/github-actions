@@ -45,6 +45,7 @@ jobs:
         run: |
           echo "github.ref = ${{ github.ref }}"
           echo "github.workspace = ${{ github.workspace }}"
+          echo "env.branch_name = ${{ env.branch_name }}"
 
           mkdir -p reports/${{ env.branch_name }}
           cd reports/${{ env.branch_name }}
