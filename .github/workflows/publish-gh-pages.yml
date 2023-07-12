@@ -22,7 +22,7 @@ jobs:
       - name: Validate inputs
         shell: bash
         run: |
-          [ "${{ inputs.artifacts }}" ] || { echo "artifacts must be provided"; exit 1; }
+          [[ "${{ inputs.artifacts }}" ]] || { echo "artifacts must be provided"; exit 1; }
 
           echo "github.ref_name ${{ github.ref_name }}"
           echo "github.repository ${{ github.repository }}"
