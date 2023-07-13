@@ -2,6 +2,7 @@ name: Reusable workflow - Publish gh-pages
 
 # commit 1
 # commit 2
+# commit 3
 
 on:
   workflow_call:
