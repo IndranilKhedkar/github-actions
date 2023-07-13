@@ -1,5 +1,7 @@
 name: Reusable workflow - Publish gh-pages
 
+# commit 1
+
 on:
   workflow_call:
     inputs:
