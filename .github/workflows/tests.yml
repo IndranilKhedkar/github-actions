@@ -70,5 +70,5 @@ jobs:
       pull-requests: write
     uses: IndranilKhedkar/github-actions/.github/workflows/publish-gh-pages.yml@test-github-workflow
     with:
-      artifacts: '{\"Coverage report\": \"unit-tests-coverage\", \"Test results\": \"unit-tests\"}'
+      artifacts-to-publish: '{\"Coverage report\": \"unit-tests-coverage\", \"Test results\": \"unit-tests\"}'
       comment-title: 'Unit test reports'

@@ -3,7 +3,7 @@ name: Reusable workflow - Publish gh-pages
 on:
   workflow_call:
     inputs:
-      artifacts:
+      artifacts-to-publish:
         description: 'Artifacts to be published to gh-pages'
         required: true
         type: string
@@ -14,7 +14,7 @@ on:
         type: string
 
 concurrency:
-  group: ${{ github.ref }}
+  group: gh-pages-${{ github.ref }}
 
 jobs:
   publish-gh-pages:
@@ -32,6 +32,7 @@ jobs:
         run: |
           echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
           echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
+          sleep 5m
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
@@ -51,7 +52,7 @@ jobs:
           
           rm -rf -- *
 
-          echo '${{ inputs.artifacts }}' | sed 's/\\//g' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
+          echo '${{ inputs.artifacts-to-publish }}' | sed 's/\\//g' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
             cp -R ${{ github.workspace }}/artifacts/$path .
           done
           
@@ -65,7 +66,8 @@ jobs:
 
           sleep 5m
 
-      - name: Cleanup downloaded artifacts
+      - name: Delete downloaded artifacts
+        if: always()
         shell: bash
         run: |
           rm -rf -- ${{ github.workspace }}/artifacts
@@ -77,7 +79,7 @@ jobs:
           script: |
             function generateComment() {
               let commentBody = "";
-              const artifactsObj = JSON.parse(`${{ inputs.artifacts }}`);
+              const artifactsObj = JSON.parse(`${{ inputs.artifacts-to-publish }}`);
               
               for (const key in artifactsObj) {
                 commentBody += `- [${key}](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`;
