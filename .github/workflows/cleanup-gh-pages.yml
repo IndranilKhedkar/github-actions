@@ -37,11 +37,17 @@ jobs:
             
             while !(git push --force-with-lease)
             do
+              echo "Resetting last commit"
               git reset --soft HEAD@{1}
+              echo "Stashing staged changes"
               git stash
+              echo "Rebasing"
               git pull --rebase
+              echo "Applying stash"
               git stash pop
+              echo "Staging changes"
               git add .
+              echo "Committing changes"
               git commit --amend -am "Deleting $BRANCH_NAME directory." || true
             done
           else
