@@ -28,11 +28,12 @@ jobs:
 
           if [ -d "$BRANCH_NAME" ]; then
             rm -rf -- $BRANCH_NAME
+            cd ..
             git config user.name github-actions
             git config user.email github-actions@github.com
 
             git status
-            git add .
+            git add reports/*
             git commit --amend -am "Deleting $BRANCH_NAME directory." || true
             
             while !(git push --force-with-lease)
@@ -46,7 +47,7 @@ jobs:
               echo "Applying stash"
               git stash pop
               echo "Staging changes"
-              git add .
+              git add reports/*
               echo "Committing changes"
               git commit --amend -am "Deleting $BRANCH_NAME directory." || true
             done

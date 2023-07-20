@@ -59,7 +59,8 @@ jobs:
           git config user.name github-actions
           git config user.email github-actions@github.com
          
-          git add .
+          cd ../..
+          git add reports/*
           git commit --amend -am ${{ env.branch_name }} || true
           
           while !(git push --force-with-lease)
@@ -73,7 +74,7 @@ jobs:
             echo "Applying stash"
             git stash pop
             echo "Staging changes"
-            git add .
+            git add reports/*
             echo "Committing changes"
             git commit --amend -am ${{ env.branch_name }} || true
           done
