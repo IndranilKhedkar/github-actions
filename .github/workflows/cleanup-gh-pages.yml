@@ -22,13 +22,11 @@ jobs:
         env:
           BRANCH_NAME: ${{ github.head_ref }}
         run: |
-          cd reports
+          echo "reports/$BRANCH_NAME";
 
-          echo "${{ github.ref }}"
-
-          if [ -d "$BRANCH_NAME" ]; then
-            rm -rf -- $BRANCH_NAME
-            cd ..
+          if [ -d "reports/$BRANCH_NAME" ]; then
+            rm -rf -- "reports/$BRANCH_NAME"
+            
             git config user.name github-actions
             git config user.email github-actions@github.com
 
