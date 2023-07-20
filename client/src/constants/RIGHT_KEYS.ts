@@ -1,3 +1,4 @@
+// Comment 1
 export const RIGHT_KEYS = {
   ACCOUNTS_INVOICING_READ: 'accounts.invoicing.read',
   ACCOUNTS_INVOICING_WRITE: 'accounts.invoicing.write',
