@@ -3,7 +3,7 @@ name: Reusable workflow - Publish gh-pages
 on:
   workflow_call:
     inputs:
-      artifacts:
+      artifacts-to-publish:
         description: 'Artifacts to be published to gh-pages'
         required: true
         type: string
@@ -14,8 +14,7 @@ on:
         type: string
 
 concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
+  group: gh-pages-${{ github.ref_name }}
 
 jobs:
   publish-gh-pages:
@@ -31,42 +30,49 @@ jobs:
       - name: Set the environment variables
         shell: bash
         run: |
-          echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
+          echo "branch_name=${{ github.ref_name }}" >> $GITHUB_ENV
           echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
-          name: reports
           path: ${{ github.workspace }}/artifacts
 
       - name: Commit reports to gh-pages branch
         shell: bash
         run: |
           echo "github.ref = ${{ github.ref }}"
+          echo "github.ref_name = ${{ github.ref_name }}"
+          echo "github.head_ref = ${{ github.head_ref }}"
           echo "github.workspace = ${{ github.workspace }}"
           echo "env.branch_name = ${{ env.branch_name }}"
 
           mkdir -p reports/${{ env.branch_name }}
-          cd reports/${{ env.branch_name }}
           
-          rm -rf -- *
+          rm -rf -- reports/${{ env.branch_name }}
 
-          echo '${{ inputs.artifacts }}' | sed 's/\\//g' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
-            cp -R ${{ github.workspace }}/artifacts/$path .
+          echo '${{ inputs.artifacts-to-publish }}' | sed 's/\\//g' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
+            cp -R ${{ github.workspace }}/artifacts/$path reports/${{ env.branch_name }}
           done
           
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git pull
-          git status
-          git add .
-          git commit -am ${{ env.branch_name }} || true
-          git push
+         
+          git add reports/*
+          git commit --amend -am ${{ env.branch_name }} || true
+          
+          while !(git push --force-with-lease)
+          do
+            git reset --soft HEAD@{1}
+            git stash
+            git pull --rebase
+            git stash pop
+            git add reports/*
+            git commit --amend -am ${{ env.branch_name }} || true
+          done
 
-          sleep 5m
-
-      - name: Cleanup downloaded artifacts
+      - name: Delete downloaded artifacts
+        if: always()
         shell: bash
         run: |
           rm -rf -- ${{ github.workspace }}/artifacts
@@ -78,7 +84,7 @@ jobs:
           script: |
             function generateComment() {
               let commentBody = "";
-              const artifactsObj = JSON.parse(`${{ inputs.artifacts }}`);
+              const artifactsObj = JSON.parse(`${{ inputs.artifacts-to-publish }}`);
               
               for (const key in artifactsObj) {
                 commentBody += `- [${key}](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`;

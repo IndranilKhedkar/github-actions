@@ -4,8 +4,7 @@ on:
   workflow_call:
 
 concurrency:
-  group: ${{ github.ref }}
-  cancel-in-progress: true
+  group: gh-pages-${{ github.ref_name }}
 
 jobs:
   cleanup-gh-pages:
@@ -21,20 +20,29 @@ jobs:
       - name: Cleanup reports folder
         shell: bash
         env:
-          BRANCH_NAME: ${{ github.head_ref }}
+          BRANCH_NAME: ${{ github.ref_name }}
         run: |
-          cd reports
+          echo "reports/$BRANCH_NAME";
 
-          echo "${{ github.ref }}"
-
-          if [ -d "$BRANCH_NAME" ]; then
-            rm -rf -- $BRANCH_NAME
+          if [ -d "reports/$BRANCH_NAME" ]; then
+            rm -rf -- "reports/$BRANCH_NAME"
+            
             git config user.name github-actions
             git config user.email github-actions@github.com
-            git pull
+
             git status
-            git diff --quiet && git diff --staged --quiet || git commit -am "Deleting $BRANCH_NAME directory."
-            git push
+            git add reports/*
+            git commit --amend -am "Deleting $BRANCH_NAME directory." || true
+            
+            while !(git push --force-with-lease)
+            do
+              git reset --soft HEAD@{1}
+              git stash
+              git pull --rebase
+              git stash pop
+              git add reports/*
+              git commit --amend -am "Deleting $BRANCH_NAME directory." || true
+            done
           else
             echo "$BRANCH_NAME directory does not exists."
           fi

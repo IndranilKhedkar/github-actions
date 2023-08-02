@@ -1,9 +1,5 @@
 name: Run Tests
 
-# commit 1
-# commit 2
-# commit 3
-
 on:
   pull_request:
   push:
@@ -74,5 +70,5 @@ jobs:
       pull-requests: write
     uses: IndranilKhedkar/github-actions/.github/workflows/publish-gh-pages.yml@test-github-workflow
     with:
-      artifacts-to-publish: '{\"Coverage report\": \"unit-tests-coverage\", \"Test results\": \"unit-tests\"}'
+      artifacts-to-publish: '{\"Coverage report\": \"reports/unit-tests-coverage\", \"Test results\": \"reports/unit-tests\"}'
       comment-title: 'Unit test reports'
