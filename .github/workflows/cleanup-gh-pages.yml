@@ -4,7 +4,7 @@ on:
   workflow_call:
 
 concurrency:
-  group: gh-pages-${{ github.ref }}
+  group: gh-pages-${{ github.ref_name }}
 
 jobs:
   cleanup-gh-pages:
@@ -20,7 +20,7 @@ jobs:
       - name: Cleanup reports folder
         shell: bash
         env:
-          BRANCH_NAME: ${{ github.head_ref }}
+          BRANCH_NAME: ${{ github.ref_name }}
         run: |
           echo "reports/$BRANCH_NAME";
 

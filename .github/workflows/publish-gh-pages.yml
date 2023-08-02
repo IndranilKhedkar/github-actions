@@ -14,7 +14,7 @@ on:
         type: string
 
 concurrency:
-  group: gh-pages-${{ github.ref }}
+  group: gh-pages-${{ github.ref_name }}
 
 jobs:
   publish-gh-pages:
@@ -30,14 +30,13 @@ jobs:
       - name: Set the environment variables
         shell: bash
         run: |
-          echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
+          echo "branch_name=${{ github.ref_name }}" >> $GITHUB_ENV
           echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
           sleep 2m
 
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
-          name: reports
           path: ${{ github.workspace }}/artifacts
 
       - name: Commit reports to gh-pages branch
