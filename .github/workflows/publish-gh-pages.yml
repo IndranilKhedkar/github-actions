@@ -51,7 +51,7 @@ jobs:
           
           rm -rf -- reports/${{ env.branch_name }}
 
-          echo '${{ inputs.artifacts-to-publish }}' | sed 's/\\//g' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
+          echo '${{ inputs.artifacts-to-publish }}' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
             cp -R ${{ github.workspace }}/artifacts/$path reports/${{ env.branch_name }}
           done
           
