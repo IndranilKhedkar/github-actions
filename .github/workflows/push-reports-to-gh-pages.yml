@@ -42,8 +42,8 @@ jobs:
       - name: Commit reports to the gh-pages branch
         shell: bash
         run: |
-          mkdir -p reports/${{ env.branch_name }}
           rm -rf -- reports/${{ env.branch_name }}
+          mkdir -p reports/${{ env.branch_name }}
           ls -r ${{ github.workspace }}/artifacts
 
           echo '${{ inputs.reports-to-push }}' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
