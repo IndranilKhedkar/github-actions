@@ -22,8 +22,6 @@ jobs:
         env:
           BRANCH_NAME: ${{ github.ref_name }}
         run: |
-          echo "reports/$BRANCH_NAME";
-
           if [ -d "reports/$BRANCH_NAME" ]; then
             rm -rf -- "reports/$BRANCH_NAME"
             

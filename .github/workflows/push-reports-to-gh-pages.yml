@@ -44,15 +44,8 @@ jobs:
         run: |
           rm -rf -- reports/${{ env.branch_name }}
           mkdir -p reports/${{ env.branch_name }}
-          ls -r ${{ github.workspace }}/artifacts
-
+          
           echo '${{ inputs.reports-to-push }}' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
-            echo $path
-            echo ${{ env.branch_name }}
-            echo ${{ github.workspace }}/artifacts/$path
-            echo reports/${{ env.branch_name }}
-            ls -r ${{ github.workspace }}/artifacts/$path
-            ls -r reports/${{ env.branch_name }}
             cp -R ${{ github.workspace }}/artifacts/$path reports/${{ env.branch_name }}
           done
 
