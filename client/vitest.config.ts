@@ -3,6 +3,7 @@ import { defineConfig } from 'vitest/config';
 export default defineConfig({
   test: {
     include: ['src/**/__tests__/*.{js,ts,jsx,tsx}'],
+    exclude: ['reports'],
     coverage: {
       watermarks: {
         statements: [50, 80],

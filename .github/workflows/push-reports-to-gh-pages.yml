@@ -46,7 +46,7 @@ jobs:
           rm -rf -- reports/${{ env.branch_name }}
 
           echo '${{ inputs.reports-to-push }}' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
-            cp -R ${{ github.workspace }}/artifacts/$path/ reports/${{ env.branch_name }}/
+            cp -R ${{ github.workspace }}/artifacts/$path reports/${{ env.branch_name }}
           done
 
           git config user.name github-actions
