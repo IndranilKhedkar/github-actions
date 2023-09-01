@@ -39,6 +39,7 @@ jobs:
       - name: Upload unit test reports
         uses: actions/upload-artifact@v3
         with:
+          name: reports
           path: client/reports
           retention-days: 1
 
@@ -69,5 +70,5 @@ jobs:
       pull-requests: write
     uses: IndranilKhedkar/github-actions/.github/workflows/push-reports-to-gh-pages.yml@test-github-workflows
     with:
-      reports-to-push: '{"Coverage report": "reports/unit-tests-coverage", "Test results": "reports/unit-tests"}'
+      reports-to-push: '{"Coverage report": "unit-tests-coverage", "Test results": "unit-tests"}'
       comment-title: 'Unit test reports'
