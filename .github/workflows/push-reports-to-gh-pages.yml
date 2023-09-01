@@ -1,25 +1,25 @@
-name: Reusable workflow - Push reports to gh-pages
+name: Reusable workflow - Push reports to gh-pages branch
 
 on:
   workflow_call:
     inputs:
       reports-to-push:
-        description: 'Reports to push to the gh-pages branch'
+        description: 'Reports to be pushed to the gh-pages branch'
         required: true
         type: string
       comment-title:
-        description: 'Comment title'
+        description: 'Pull request comment title'
         required: false
         default: 'Test reports'
         type: string
 
 concurrency:
-  group: gh-pages-${{ github.head_ref || github.ref_name }}
+  group: gh-pages-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
-  push-reports-to-gh-pages:
-    name: Push reports to the gh-pages branch
+  push-reports-to-gh-pages-branch:
+    name: Push reports to gh-pages branch
     runs-on: ubuntu-latest
     
     steps:
@@ -49,9 +49,28 @@ jobs:
             cp -R ${{ github.workspace }}/artifacts/$path reports/${{ env.branch_name }}
           done
 
-          chmod +x IndranilKhedkar/github-actions/.github/scripts/git-amend.sh@test-github-workflows
-          # chmod +x ${GITHUB_WORKSPACE}/.github/scripts/git-amend.sh
-          IndranilKhedkar/github-actions/.github/scripts/git-amend.sh@test-github-workflows "Adding ${{ env.branch_name }} branch reports.""
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git status
+          git add reports/*
+          git commit --amend -am "Adding ${{ env.branch_name }} branch reports." || true
+          
+          retry=0
+          max_retries=5
+          retry_interval=15
+
+          while ! (git push --force-with-lease) && [[ $retry -lt $max_retries ]]
+          do
+            (( retry++ ))
+            echo "Retrying [${retry}/${max_retries}] in ${retry_interval}(s)"
+            sleep ${retry_interval}
+            git reset --soft HEAD@{1}
+            git stash
+            git pull --rebase
+            git stash pop
+            git add reports/*
+            git commit --amend -am "Adding ${{ env.branch_name }} branch reports." || true
+          done
 
       - name: Delete downloaded artifacts
         if: always()
@@ -59,17 +78,17 @@ jobs:
         run: |
           rm -rf -- ${{ github.workspace }}/artifacts
 
-      - name: Comment report details on pull request
+      - name: Comment report details on the pull request
         uses: actions/github-script@v6
         if: github.event_name == 'pull_request'
         with:
           script: |
             function generateComment() {
               let commentBody = "";
-              const artifactsObj = JSON.parse(`${{ inputs.reports-to-push }}`);
+              const reportObj = JSON.parse(`${{ inputs.reports-to-push }}`);
               
-              for (const key in artifactsObj) {
-                commentBody += `- [${key}](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`;
+              for (const key in reportObj) {
+                commentBody += `- [${key}](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ env.branch_name }}/${reportObj[key]})\n`;
               }
 
               return `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`;
