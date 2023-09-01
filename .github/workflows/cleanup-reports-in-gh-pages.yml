@@ -25,8 +25,9 @@ jobs:
         run: |
           if [ -d "reports/$BRANCH_NAME" ]; then
             rm -rf -- "reports/$BRANCH_NAME"
-            chmod +x ${GITHUB_WORKSPACE}/.github/scripts/git-amend.sh
-            ${GITHUB_WORKSPACE}/.github/scripts/git-amend.sh "Deleting $BRANCH_NAME directory."
+            chmod +x IndranilKhedkar/github-actions/.github/scripts/git-amend.sh@test-github-workflows
+            # chmod +x ${GITHUB_WORKSPACE}/.github/scripts/git-amend.sh
+            IndranilKhedkar/github-actions/.github/scripts/git-amend.sh@test-github-workflows "Deleting $BRANCH_NAME directory."
           else
             echo "$BRANCH_NAME directory does not exists."
           fi

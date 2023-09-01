@@ -49,8 +49,9 @@ jobs:
             cp -R ${{ github.workspace }}/artifacts/$path reports/${{ env.branch_name }}
           done
 
-          chmod +x ${GITHUB_WORKSPACE}/.github/scripts/git-amend.sh
-          ${GITHUB_WORKSPACE}/.github/scripts/git-amend.sh Adding ${{ env.branch_name }} branch reports.
+          chmod +x IndranilKhedkar/github-actions/.github/scripts/git-amend.sh@test-github-workflows
+          # chmod +x ${GITHUB_WORKSPACE}/.github/scripts/git-amend.sh
+          IndranilKhedkar/github-actions/.github/scripts/git-amend.sh@test-github-workflows "Adding ${{ env.branch_name }} branch reports.""
 
       - name: Delete downloaded artifacts
         if: always()
