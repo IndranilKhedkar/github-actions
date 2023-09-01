@@ -45,7 +45,7 @@ jobs:
           mkdir -p reports/${{ env.branch_name }}
           rm -rf -- reports/${{ env.branch_name }}
 
-          echo '${{ inputs.artifacts-to-publish }}' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
+          echo '${{ inputs.reports-to-push }}' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
             cp -R ${{ github.workspace }}/artifacts/$path reports/${{ env.branch_name }}
           done
 
@@ -65,7 +65,7 @@ jobs:
           script: |
             function generateComment() {
               let commentBody = "";
-              const artifactsObj = JSON.parse(`${{ inputs.artifacts-to-publish }}`);
+              const artifactsObj = JSON.parse(`${{ inputs.reports-to-push }}`);
               
               for (const key in artifactsObj) {
                 commentBody += `- [${key}](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`;
