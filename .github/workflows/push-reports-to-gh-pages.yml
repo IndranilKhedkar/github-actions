@@ -37,7 +37,7 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v3
         with:
-          path: ${{ github.workspace }}
+          path: ${{ github.workspace }}/artifacts
 
       - name: Commit reports to the gh-pages branch
         shell: bash
