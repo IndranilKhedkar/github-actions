@@ -1,9 +1,5 @@
 name: Run Tests
 
-# commit 1
-# commit 2
-# commit 3
-
 on:
   pull_request:
   push:
@@ -65,14 +61,14 @@ jobs:
           echo "github.sha ${{ github.sha }}"
           echo "GitHub - ${{ github }}"
 
-  publish-test-reports:
-    name: Publish test reports to gh-pages
+  push-test-reports-to-gh-pages:
+    name: Push test reports to gh-pages branch
     needs: unit
     permissions:
       contents: write
       issues: read
       pull-requests: write
-    uses: IndranilKhedkar/github-actions/.github/workflows/publish-gh-pages.yml@test-github-workflow
+    uses: IndranilKhedkar/github-actions/.github/workflows/push-reports-to-gh-pages.yml@test-github-workflow-1
     with:
-      artifacts-to-publish: '{\"Coverage report\": \"unit-tests-coverage\", \"Test results\": \"unit-tests\"}'
+      reports-to-push: '{"Coverage report": "reports/unit-tests-coverage", "Test results": "reports/unit-tests"}'
       comment-title: 'Unit test reports'

@@ -10,4 +10,4 @@ jobs:
     name: Cleanup gh-pages
     permissions:
       contents: write
-    uses: IndranilKhedkar/github-actions/.github/workflows/cleanup-gh-pages.yml@test-github-workflow
+    uses: IndranilKhedkar/github-actions/.github/workflows/cleanup-reports-in-gh-pages.yml@test-github-workflow-1

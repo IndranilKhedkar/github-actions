@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     include: ['src/**/__tests__/*.{js,ts,jsx,tsx}'],
     coverage: {
+      exclude: ['reports'],
       watermarks: {
         statements: [50, 80],
         functions: [50, 80],
