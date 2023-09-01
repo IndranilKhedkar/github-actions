@@ -1,0 +1,32 @@
+name: Reusable workflow - Cleanup reports in gh-pages
+
+on:
+  workflow_call:
+
+concurrency:
+  group: gh-pages-${{ github.head_ref }} 
+  cancel-in-progress: true
+
+jobs:
+  cleanup-reports-in-gh-pages:
+    name: Cleanup reports in gh-pages branch
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+
+      - name: Cleanup reports
+        shell: bash
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+        run: |
+          if [ -d "reports/$BRANCH_NAME" ]; then
+            rm -rf -- "reports/$BRANCH_NAME"
+            chmod +x ${GITHUB_WORKSPACE}/.github/scripts/git-amend.sh
+            ${GITHUB_WORKSPACE}/.github/scripts/git-amend.sh "Deleting $BRANCH_NAME directory."
+          else
+            echo "$BRANCH_NAME directory does not exists."
+          fi

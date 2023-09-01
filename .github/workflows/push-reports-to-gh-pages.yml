@@ -1,0 +1,100 @@
+name: Reusable workflow - Push reports to gh-pages
+
+on:
+  workflow_call:
+    inputs:
+      reports-to-push:
+        description: 'Reports to push to the gh-pages branch'
+        required: true
+        type: string
+      comment-title:
+        description: 'Comment title'
+        required: false
+        default: 'Test reports'
+        type: string
+
+concurrency:
+  group: gh-pages-${{ github.head_ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  push-reports-to-gh-pages:
+    name: Push reports to the gh-pages branch
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout gh-pages branch
+        uses: actions/checkout@v3
+        with:
+          ref: gh-pages
+
+      - name: Set the environment variables
+        shell: bash
+        run: |
+          echo "branch_name=${{ github.head_ref || github.ref_name }}" >> $GITHUB_ENV
+          echo "sha_short=$(git rev-parse --short ${{ github.event.pull_request.head.sha }})" >> $GITHUB_ENV
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          path: ${{ github.workspace }}/artifacts
+
+      - name: Commit reports to the gh-pages branch
+        shell: bash
+        run: |
+          mkdir -p reports/${{ env.branch_name }}
+          rm -rf -- reports/${{ env.branch_name }}
+
+          echo '${{ inputs.artifacts-to-publish }}' | jq -r 'to_entries[] | "\(.value)"' | while read path; do
+            cp -R ${{ github.workspace }}/artifacts/$path reports/${{ env.branch_name }}
+          done
+
+          chmod +x ${GITHUB_WORKSPACE}/.github/scripts/git-amend.sh
+          ${GITHUB_WORKSPACE}/.github/scripts/git-amend.sh Adding ${{ env.branch_name }} branch reports.
+
+      - name: Delete downloaded artifacts
+        if: always()
+        shell: bash
+        run: |
+          rm -rf -- ${{ github.workspace }}/artifacts
+
+      - name: Comment report details on pull request
+        uses: actions/github-script@v6
+        if: github.event_name == 'pull_request'
+        with:
+          script: |
+            function generateComment() {
+              let commentBody = "";
+              const artifactsObj = JSON.parse(`${{ inputs.artifacts-to-publish }}`);
+              
+              for (const key in artifactsObj) {
+                commentBody += `- [${key}](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/reports/${{ env.branch_name }}/${artifactsObj[key]})\n`;
+              }
+
+              return `## ${{ inputs.comment-title }}\n\nCommit: ${{ env.sha_short }}\n\n${commentBody}`;
+            }
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.number
+            });
+            const githubActionBotUser = await github.rest.users.getByUsername({ username: 'github-actions[bot]' });
+            const botComment = comments.find(comment => comment.user.id === githubActionBotUser.data.id && comment.body.includes(`## ${{ inputs.comment-title }}`));
+            const comment = generateComment();
+
+            if(botComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: botComment.id,
+                body: `${comment}\n:recycle: This comment has been updated with latest results.`
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.payload.number,
+                body: comment
+              });
+            }
